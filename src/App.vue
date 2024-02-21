@@ -8,7 +8,7 @@
       </v-toolbar-title>
 
       <v-spacer></v-spacer>
-      <v-btn v-show="!isAuthenticated" text to="/login">Login</v-btn>
+      <img v-show="isAuthenticated" class="profilna" :src="this.profilePicture"> &nbsp; {{ mail }} | &nbsp; <v-btn v-show="!isAuthenticated" text to="/login">Login</v-btn>
       <v-btn v-show="!isAuthenticated" text to="/register">Register</v-btn>
       <v-btn v-show="isAuthenticated" @click.prevent="signOut()">LogOut</v-btn>
     </v-app-bar>
@@ -36,6 +36,7 @@ export default {
     isAuthenticated: false,
     isAuthorized: false,
     mail: "User not loged in!",
+    profilePicture: null
   }),
 
   mounted() {
@@ -43,8 +44,9 @@ export default {
       if (user) {
         getDoc(doc(db, "Users", user.email)).then((docSnap) => {
           if (docSnap.exists()) {
-            console.log("Document data: ", docSnap.data()["Email"]);
+            console.log("Document data: ", docSnap.data()["Email", "Profilna"]);
             this.mail = docSnap.data()["Email"];
+            this.profilePicture = docSnap.data()["Profilna"]
           } else {
             console.log("No such document!");
           }
@@ -83,3 +85,14 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.profilna
+  {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #007bff; 
+    margin-right: 10px;
+  }
+</style>

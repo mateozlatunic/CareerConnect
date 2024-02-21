@@ -16,7 +16,7 @@
 
               <v-text-field
                 v-model="password"
-                :rules="[rules.password, rules.required]"
+                :rules="[rules.password, rules.length(6), rules.required]"
                 label="Lozinka"
                 type="password"
                 required
@@ -24,7 +24,6 @@
 
               <v-btn
                 color="primary"
-                type="submit"
                 :disabled="!form"
                 :loading="isLoading"
                 @click="login()"

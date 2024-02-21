@@ -23,6 +23,46 @@
                 required
               ></v-text-field>
 
+              <v-dialog
+                ref="dialog"
+                v-model="modal"
+                :return-value.sync="date"
+                persistent
+                width="290px"
+              >
+              <template v-slot:activator="{ on, attrs }">
+                <v-text-field
+                  v-model="date"
+                  label="Odaberite datum rođenja"
+                  prepend-icon="mdi-calendar"
+                  readonly
+                  v-bind="attrs"
+                  v-on="on"
+                ></v-text-field>
+              </template>
+              <v-date-picker
+                v-model="date"
+                scrollable
+              >
+                <v-spacer></v-spacer>
+                <v-btn
+                  text
+                  color="primary"
+                  @click="modal = false"
+                >
+                  Cancel
+                </v-btn>
+                <v-btn
+                  text
+                  color="primary"
+                  @click="$refs.dialog.save(date)"
+                >
+                  OK
+                </v-btn>
+              </v-date-picker>
+        </v-dialog>
+
+             
               <v-text-field
                 v-model="email"
                 :rules="[rules.email, rules.required]"
@@ -56,12 +96,21 @@
                 :rules="[rules.required]"
               ></v-select>
 
+              <input 
+                :rules="[rules.required]"
+                class="butot" 
+                type="file" 
+                ref="PictureFile" 
+              />
+
+              <v-spacer style="margin-bottom: 50px; margin-top: 20px;"></v-spacer>
+
               <v-btn
                 :disabled="!form"
                 :loading="isLoading"
                 color="primary"
                 type="button"
-                @click="signup()"
+                @click="UploadImageToStorage()"
                 >Registriraj se</v-btn
               >
             </v-form>
@@ -79,6 +128,7 @@ import {
   db,
   setDoc,
   createUserWithEmailAndPassword,
+  ref, getDownloadURL, storage, uploadBytes
 } from "@/firebase";
 
 export default {
@@ -89,9 +139,12 @@ export default {
     email: null,
     userTIP: "",
     form: false,
+    profilnaURL: '',
     isLoading: false,
     password: null,
     confirmPassword: null,
+    date: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
+    modal: false,
     users: ["Poslodavac", "Trazitelj posla"],
     rules: {
       email: (v) => !!(v || "").match(/@/) || " Unesi email",
@@ -112,17 +165,38 @@ export default {
       this.password = null;
       this.confirmPassword = null;
       this.userTIP = "";
+      this.birthDate = null;
+      this.date = null;
     },
 
     postActionMoveToView() {
       this.$router.replace({ path: "/" });
     },
 
-    saveAdditionalData(user, email, name, surname, usertype) {
+    async UploadImageToStorage() {
+        const storageRef = ref(storage, "Users/" + this.email + "/Profilna Slika/" + "Profilna");
+
+        await uploadBytes(storageRef, this.$refs.PictureFile.files[0]).then((snapshot) => {
+        console.log("Upload complete!");
+
+          getDownloadURL(snapshot.ref).then((url) => {
+            this.profilnaURL = url;
+            this.signup();
+          }).catch((error) => {
+            console.error("Error getting download URL:", error);
+          });
+        }).catch((error) => {
+          console.error("Error uploading image:", error);
+        });
+    },  
+
+    saveAdditionalData(user, email, name, surname, usertype, profilna, birthDate) {
       setDoc(doc(db, "Users", email.toLowerCase()), {
         Name: name,
         Surname: surname,
         Email: email,
+        Profilna: profilna,
+        Birthdate: birthDate,
         AuthorisationType: usertype
       });
     },
@@ -139,7 +213,9 @@ export default {
             const name = this.name;
             const surname = this.surname;
             const usertype = this.userTIP;
-            this.saveAdditionalData(user, email, name, surname, usertype);
+            const profilna = this.profilnaURL;
+            const birthDate = this.date;
+            this.saveAdditionalData(user, email, name, surname, usertype, profilna, birthDate);
             this.clearFormData();
             this.postActionMoveToView();
           })
