@@ -6,7 +6,6 @@
           <v-card-title class="headline">Registracija</v-card-title>
           <v-card-text>
             <v-form ref="form" v-model="form">
-
               <v-text-field
                 v-model="name"
                 :rules="[rules.required]"
@@ -30,39 +29,27 @@
                 persistent
                 width="290px"
               >
-              <template v-slot:activator="{ on, attrs }">
-                <v-text-field
-                  v-model="date"
-                  label="Odaberite datum rođenja"
-                  prepend-icon="mdi-calendar"
-                  readonly
-                  v-bind="attrs"
-                  v-on="on"
-                ></v-text-field>
-              </template>
-              <v-date-picker
-                v-model="date"
-                scrollable
-              >
-                <v-spacer></v-spacer>
-                <v-btn
-                  text
-                  color="primary"
-                  @click="modal = false"
-                >
-                  Cancel
-                </v-btn>
-                <v-btn
-                  text
-                  color="primary"
-                  @click="$refs.dialog.save(date)"
-                >
-                  OK
-                </v-btn>
-              </v-date-picker>
-        </v-dialog>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-text-field
+                    v-model="date"
+                    label="Odaberite datum rođenja"
+                    prepend-icon="mdi-calendar"
+                    readonly
+                    v-bind="attrs"
+                    v-on="on"
+                  ></v-text-field>
+                </template>
+                <v-date-picker v-model="date" scrollable>
+                  <v-spacer></v-spacer>
+                  <v-btn text color="primary" @click="modal = false">
+                    Cancel
+                  </v-btn>
+                  <v-btn text color="primary" @click="$refs.dialog.save(date)">
+                    OK
+                  </v-btn>
+                </v-date-picker>
+              </v-dialog>
 
-             
               <v-text-field
                 v-model="email"
                 :rules="[rules.email, rules.required]"
@@ -96,14 +83,52 @@
                 :rules="[rules.required]"
               ></v-select>
 
-              <input 
+              <input
                 :rules="[rules.required]"
-                class="butot" 
-                type="file" 
-                ref="PictureFile" 
+                class="butot"
+                type="file"
+                ref="PictureFile"
               />
 
-              <v-spacer style="margin-bottom: 50px; margin-top: 20px;"></v-spacer>
+              <v-spacer
+                style="margin-bottom: 10px; margin-top: 20px"
+              ></v-spacer>
+
+              <v-text-field
+                v-if="userTIP === 'Poslodavac'"
+                v-model="interest"
+                :rules="[rules.required]"
+                label="Zanimanje"
+                type="text"
+                required
+              ></v-text-field>
+
+              <v-text-field
+                v-if="userTIP === 'Poslodavac'"
+                v-model="mobile"
+                :rules="[rules.required]"
+                label="Telefonski broj"
+                type="tel"
+                required
+              ></v-text-field>
+
+              <v-text-field
+                v-if="userTIP === 'Poslodavac'"
+                v-model="companyName"
+                :rules="[rules.required]"
+                label="Naziv tvrtke"
+                type="text"
+                required
+              ></v-text-field>
+
+              <v-text-field
+                v-if="userTIP === 'Poslodavac'"
+                v-model="companyAddress"
+                :rules="[rules.required]"
+                label="Adresa tvrtke"
+                type="text"
+                required
+              ></v-text-field>
 
               <v-btn
                 :disabled="!form"
@@ -128,7 +153,10 @@ import {
   db,
   setDoc,
   createUserWithEmailAndPassword,
-  ref, getDownloadURL, storage, uploadBytes
+  ref,
+  getDownloadURL,
+  storage,
+  uploadBytes,
 } from "@/firebase";
 
 export default {
@@ -139,21 +167,22 @@ export default {
     email: null,
     userTIP: "",
     form: false,
-    profilnaURL: '',
+    profilnaURL: "",
     isLoading: false,
     password: null,
     confirmPassword: null,
-    date: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
+    date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+      .toISOString()
+      .substr(0, 10),
     modal: false,
     users: ["Poslodavac", "Trazitelj posla"],
     rules: {
       email: (v) => !!(v || "").match(/@/) || " Unesi email",
-      length: (len) => (v) =>
-        (v || "").length >= len || `${len}`,
+      length: (len) => (v) => (v || "").length >= len || `${len}`,
       password: (v) =>
         !!(v || "").match(/^(?=.*[a-zA-Z])(?=.*\d).*$/) ||
         "Lozinka mora sadržavati slova i brojeve",
-      required: (v) => !!v || "Potrebno popuniti polje"
+      required: (v) => !!v || "Potrebno popuniti polje",
     },
   }),
 
@@ -167,6 +196,10 @@ export default {
       this.userTIP = "";
       this.birthDate = null;
       this.date = null;
+      this.mobile = null;
+      this.interest = null;
+      this.companyAddress = null;
+      this.companyName = null;
     },
 
     postActionMoveToView() {
@@ -174,30 +207,45 @@ export default {
     },
 
     async UploadImageToStorage() {
-        const storageRef = ref(storage, "Users/" + this.email + "/Profilna Slika/" + "Profilna");
+      const storageRef = ref(
+        storage,
+        "Users/" + this.email + "/Profilna Slika/" + "Profilna"
+      );
 
-        await uploadBytes(storageRef, this.$refs.PictureFile.files[0]).then((snapshot) => {
-        console.log("Upload complete!");
+      await uploadBytes(storageRef, this.$refs.PictureFile.files[0])
+        .then((snapshot) => {
+          console.log("Upload complete!");
 
-          getDownloadURL(snapshot.ref).then((url) => {
-            this.profilnaURL = url;
-            this.signup();
-          }).catch((error) => {
-            console.error("Error getting download URL:", error);
-          });
-        }).catch((error) => {
+          getDownloadURL(snapshot.ref)
+            .then((url) => {
+              this.profilnaURL = url;
+              this.signup();
+            })
+            .catch((error) => {
+              console.error("Error getting download URL:", error);
+            });
+        })
+        .catch((error) => {
           console.error("Error uploading image:", error);
         });
-    },  
+    },
 
-    saveAdditionalData(user, email, name, surname, usertype, profilna, birthDate) {
+    saveAdditionalData(
+      user,
+      email,
+      name,
+      surname,
+      usertype,
+      profilna,
+      birthDate
+    ) {
       setDoc(doc(db, "Users", email.toLowerCase()), {
         Name: name,
         Surname: surname,
         Email: email,
         Profilna: profilna,
         Birthdate: birthDate,
-        AuthorisationType: usertype
+        AuthorisationType: usertype,
       });
     },
 
@@ -215,7 +263,15 @@ export default {
             const usertype = this.userTIP;
             const profilna = this.profilnaURL;
             const birthDate = this.date;
-            this.saveAdditionalData(user, email, name, surname, usertype, profilna, birthDate);
+            this.saveAdditionalData(
+              user,
+              email,
+              name,
+              surname,
+              usertype,
+              profilna,
+              birthDate
+            );
             this.clearFormData();
             this.postActionMoveToView();
           })
