@@ -98,15 +98,15 @@
                 v-if="userTIP === 'Poslodavac'"
                 v-model="interest"
                 :rules="[rules.required]"
-                label="Zanimanje"
+                label="Profesija"
                 type="text"
                 required
               ></v-text-field>
 
               <v-text-field
                 v-if="userTIP === 'Poslodavac'"
-                v-model="mobile"
-                :rules="[rules.required]"
+                v-model="telephone"
+                :rules="[rules.telephoneNumber, rules.required]"
                 label="Telefonski broj"
                 type="tel"
                 required
@@ -135,7 +135,7 @@
                 :loading="isLoading"
                 color="primary"
                 type="button"
-                @click="UploadImageToStorage()"
+                @click="UploadImageToStorage(userTIP)"
                 >Registriraj se</v-btn
               >
             </v-form>
@@ -171,6 +171,11 @@ export default {
     isLoading: false,
     password: null,
     confirmPassword: null,
+    telephone: null,
+    interest: null,
+    companyAddress: null,
+    companyName: null,
+
     date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
       .toISOString()
       .substr(0, 10),
@@ -179,10 +184,9 @@ export default {
     rules: {
       email: (v) => !!(v || "").match(/@/) || " Unesi email",
       length: (len) => (v) => (v || "").length >= len || `${len}`,
-      password: (v) =>
-        !!(v || "").match(/^(?=.*[a-zA-Z])(?=.*\d).*$/) ||
-        "Lozinka mora sadržavati slova i brojeve",
-      required: (v) => !!v || "Potrebno popuniti polje",
+      password: (v) => !!(v || "").match(/^(?=.*[a-zA-Z])(?=.*\d).*$/) || "Lozinka mora sadržavati slova i brojeve",
+      telephoneNumber: (v) => (v || "").length === 10 || "Mobilni broj mora imati točno 10 brojeva",
+      required: (v) => !!v || "Potrebno popuniti polje"
     },
   }),
 
@@ -196,7 +200,7 @@ export default {
       this.userTIP = "";
       this.birthDate = null;
       this.date = null;
-      this.mobile = null;
+      this.telephone = null;
       this.interest = null;
       this.companyAddress = null;
       this.companyName = null;
@@ -206,11 +210,22 @@ export default {
       this.$router.replace({ path: "/" });
     },
 
-    async UploadImageToStorage() {
-      const storageRef = ref(
-        storage,
-        "Users/" + this.email + "/Profilna Slika/" + "Profilna"
-      );
+    async UploadImageToStorage(userTIP) {
+      let storagePath = "";
+      if (userTIP === "Trazitelj posla") {
+        storagePath = "Employee/" + this.email + "/Profile Picture/Profile";
+      } 
+      
+      else if (userTIP === 'Poslodavac') {
+        storagePath = "Employer/" + this.email + "/Profile Picture/Profile";
+      } 
+      
+      else {
+        console.error("Nevaljna uloga.");
+        return;
+      }
+
+      const storageRef = ref(storage, storagePath);
 
       await uploadBytes(storageRef, this.$refs.PictureFile.files[0])
         .then((snapshot) => {
@@ -237,16 +252,33 @@ export default {
       surname,
       usertype,
       profilna,
-      birthDate
+      birthDate,
+      telephone,
+      interest,
+      companyAddress,
+      companyName
     ) {
-      setDoc(doc(db, "Users", email.toLowerCase()), {
+      const employeeData = {
         Name: name,
         Surname: surname,
         Email: email,
         Profilna: profilna,
         Birthdate: birthDate,
         AuthorisationType: usertype,
-      });
+      };
+
+      const employerData = employeeData;
+
+      // Provjera da li je poslodavac u pitanju
+      if (usertype === "Poslodavac") {
+        employerData.Telephone = telephone;
+        employerData.Interest = interest;
+        employerData.CompanyAddress = companyAddress;
+        employerData.CompanyName = companyName;
+        setDoc(doc(db, "Employer", email.toLowerCase()), employerData);
+      } else {
+        setDoc(doc(db, "Employee", email.toLowerCase()), employeeData);
+      }
     },
 
     signup() {
@@ -263,6 +295,10 @@ export default {
             const usertype = this.userTIP;
             const profilna = this.profilnaURL;
             const birthDate = this.date;
+            const telephone = this.telephone;
+            const interest = this.interest;
+            const companyAddress = this.companyAddress;
+            const companyName = this.companyName;
             this.saveAdditionalData(
               user,
               email,
@@ -270,7 +306,11 @@ export default {
               surname,
               usertype,
               profilna,
-              birthDate
+              birthDate,
+              telephone,
+              interest,
+              companyAddress,
+              companyName
             );
             this.clearFormData();
             this.postActionMoveToView();
@@ -279,7 +319,7 @@ export default {
             alert("Došlo je do pogreške", error);
           });
       } else {
-        alert("Krvo upisane lozinke");
+        alert("Krivo upisane lozinke");
       }
     },
   },
