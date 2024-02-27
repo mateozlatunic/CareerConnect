@@ -9,12 +9,8 @@
 
       <v-spacer></v-spacer>
 
-      <img
-        v-show="isAuthenticated && !profilePicture"
-        class="profilna"
-        src="@/assets/basic-profile.jpg"
-      />
-      
+      <img v-show="isAuthenticated" class="profilna" :src="this.profilePicture">
+
       &nbsp; {{ mail }} | &nbsp;
       <v-btn v-show="!isAuthenticated" text to="/login">Login</v-btn>
       <v-btn v-show="!isAuthenticated" text to="/register">Register</v-btn>
@@ -43,7 +39,7 @@ export default {
     group: null,
     isAuthenticated: false,
     isAuthorized: false,
-    mail: "User not loged in!",
+    mail: "status: neprijavljen korisnik",
     profilePicture: null,
   }),
 
@@ -62,10 +58,11 @@ export default {
             console.log("No such document!");
           }
         });
-        //this.mail = auth.currentUser.email;
-      } else {
-        this.email = "User in not loged in";
+        this.mail = auth.currentUser.email;
       }
+      else {
+				this.email = "User in not loged in"
+			}
     });
   },
 
@@ -75,7 +72,7 @@ export default {
       signOut(auth)
         .then(() => {
           console.log("signed out");
-          this.$router.push({ path: "/Login" });
+          this.$router.push({ path: "/login" });
         })
         .catch((error) => {
           console.error(error);

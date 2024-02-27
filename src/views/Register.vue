@@ -98,7 +98,7 @@
                 v-if="userTIP === 'Poslodavac'"
                 v-model="interest"
                 :rules="[rules.required]"
-                label="Profesija"
+                label="Zanimanje"
                 type="text"
                 required
               ></v-text-field>
@@ -135,7 +135,7 @@
                 :loading="isLoading"
                 color="primary"
                 type="button"
-                @click="UploadImageToStorage(userTIP)"
+                @click="UploadImageToStorage()"
                 >Registriraj se</v-btn
               >
             </v-form>
@@ -169,13 +169,13 @@ export default {
     form: false,
     profilnaURL: "",
     isLoading: false,
-    password: null,
-    confirmPassword: null,
     telephone: null,
     interest: null,
-    companyAddress: null,
     companyName: null,
-
+    companyAddress: null,
+    password: null,
+    confirmPassword: null,
+    defaultURL: 'https://firebasestorage.googleapis.com/v0/b/careerconnect-a82ba.appspot.com/o/Default%20images%2Fbasic-profile.jpg?alt=media&token=223a86e9-7508-4c52-9224-59a89136c275',
     date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
       .toISOString()
       .substr(0, 10),
@@ -185,8 +185,8 @@ export default {
       email: (v) => !!(v || "").match(/@/) || " Unesi email",
       length: (len) => (v) => (v || "").length >= len || `${len}`,
       password: (v) => !!(v || "").match(/^(?=.*[a-zA-Z])(?=.*\d).*$/) || "Lozinka mora sadržavati slova i brojeve",
-      telephoneNumber: (v) => (v || "").length === 10 || "Mobilni broj mora imati točno 10 brojeva",
-      required: (v) => !!v || "Potrebno popuniti polje"
+      required: (v) => !!v || "Potrebno popuniti polje",
+      telephoneNumber: (v) => !!v && v.length === 10 || 'Unesi 10 brojeva'
     },
   }),
 
@@ -198,6 +198,7 @@ export default {
       this.password = null;
       this.confirmPassword = null;
       this.userTIP = "";
+      this.profilnaURL = "",
       this.birthDate = null;
       this.date = null;
       this.telephone = null;
@@ -210,22 +211,12 @@ export default {
       this.$router.replace({ path: "/" });
     },
 
-    async UploadImageToStorage(userTIP) {
-      let storagePath = "";
-      if (userTIP === "Trazitelj posla") {
-        storagePath = "Employee/" + this.email + "/Profile Picture/Profile";
-      } 
-      
-      else if (userTIP === 'Poslodavac') {
-        storagePath = "Employer/" + this.email + "/Profile Picture/Profile";
-      } 
-      
-      else {
-        console.error("Nevaljna uloga.");
-        return;
-      }
-
-      const storageRef = ref(storage, storagePath);
+    async UploadImageToStorage() {
+      if(this.$refs.PictureFile.files[0]) {
+      const storageRef = ref(
+        storage,
+        "Users/" + this.email + "/Profilna Slika/" + "Profilna"
+      );
 
       await uploadBytes(storageRef, this.$refs.PictureFile.files[0])
         .then((snapshot) => {
@@ -243,85 +234,106 @@ export default {
         .catch((error) => {
           console.error("Error uploading image:", error);
         });
+      }
+      else if (!this.$refs.PictureFile.files[0]) {
+        const storageRef = ref(
+        storage,
+        "Users/" + this.email + "/Profilna Slika/" + "Profilna"
+      );
+
+      await uploadBytes(storageRef, this.defaultURL)
+        .then((snapshot) => {
+          console.log("Upload complete!");
+          this.signup();
+        })
+        .catch((error) => {
+          console.error("Error uploading image:", error);
+        });
+      }
     },
 
     saveAdditionalData(
-      user,
-      email,
-      name,
-      surname,
-      usertype,
-      profilna,
-      birthDate,
-      telephone,
-      interest,
-      companyAddress,
-      companyName
-    ) {
-      const employeeData = {
-        Name: name,
-        Surname: surname,
-        Email: email,
-        Profilna: profilna,
-        Birthdate: birthDate,
-        AuthorisationType: usertype,
-      };
+  email,
+  name,
+  surname,
+  password,
+  usertype,
+  profilna,
+  birthDate,
+  companyName,
+  companyAddress,
+  interest,
+  telephone
+) {
+  if (usertype === 'Tražitelj posla') {
+    setDoc(doc(db, "Users", email.toLowerCase()), {
+      Name: name,
+      Surname: surname,
+      Email: email,
+      Password: password,
+      Profilna: profilna,
+      Birthdate: birthDate,
+      AuthorisationType: usertype
+    });
+  } else {
+    setDoc(doc(db, "Users", email.toLowerCase()), {
+      Name: name,
+      Surname: surname,
+      Email: email,
+      Password: password,
+      Profilna: profilna,
+      Birthdate: birthDate,
+      AuthorisationType: usertype,
+      CompanyName: companyName,
+      CompanyAddress: companyAddress, 
+      Interest: interest, 
+      TelephoneNumber: telephone 
+    });
+  }
+},
 
-      const employerData = employeeData;
+signup() {
+  if (this.password === this.confirmPassword) {
+    const email = this.email;
+    const password = this.password;
+    createUserWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        alert("Uspješna registracija!");
+        console.log(userCredential);
+        const user = userCredential.user;
+        const name = this.name;
+        const surname = this.surname;
+        const usertype = this.userTIP;
+        const profilna = this.profilnaURL;
+        const birthDate = this.date;
+        const companyName = this.companyName;
+        const companyAddress = this.companyAddress;
+        const interest = this.interest;
+        const telephoneNumber = this.telephone;
+        this.saveAdditionalData(
+          email,
+          name,
+          surname,
+          password,
+          usertype,
+          profilna,
+          birthDate,
+          companyName,
+          companyAddress,
+          interest,
+          telephoneNumber 
+        );
+        this.clearFormData();
+        this.postActionMoveToView();
+      })
+      .catch((error) => {
+        alert("Došlo je do pogreške: " + error.message); 
+      });
+  } else {
+    alert("Lozinke se ne podudaraju");
+  }
+},
 
-      // Provjera da li je poslodavac u pitanju
-      if (usertype === "Poslodavac") {
-        employerData.Telephone = telephone;
-        employerData.Interest = interest;
-        employerData.CompanyAddress = companyAddress;
-        employerData.CompanyName = companyName;
-        setDoc(doc(db, "Employer", email.toLowerCase()), employerData);
-      } else {
-        setDoc(doc(db, "Employee", email.toLowerCase()), employeeData);
-      }
-    },
-
-    signup() {
-      if (this.password == this.confirmPassword) {
-        const email = this.email;
-        const password = this.password;
-        createUserWithEmailAndPassword(auth, email, password)
-          .then((userCredential) => {
-            alert("Uspješna registracija!");
-            console.log(userCredential);
-            const user = userCredential.user;
-            const name = this.name;
-            const surname = this.surname;
-            const usertype = this.userTIP;
-            const profilna = this.profilnaURL;
-            const birthDate = this.date;
-            const telephone = this.telephone;
-            const interest = this.interest;
-            const companyAddress = this.companyAddress;
-            const companyName = this.companyName;
-            this.saveAdditionalData(
-              user,
-              email,
-              name,
-              surname,
-              usertype,
-              profilna,
-              birthDate,
-              telephone,
-              interest,
-              companyAddress,
-              companyName
-            );
-            this.clearFormData();
-            this.postActionMoveToView();
-          })
-          .catch((error) => {
-            alert("Došlo je do pogreške", error);
-          });
-      } else {
-        alert("Krivo upisane lozinke");
-      }
-    },
   },
 };
 </script>
