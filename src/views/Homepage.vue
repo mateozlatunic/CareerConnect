@@ -133,7 +133,7 @@ export default {
 }
 
 .background {
-  background-color: rgb(159, 132, 255);
+  background-color: rgb(159, 132, 256);
 }
 
 .cardColor {
