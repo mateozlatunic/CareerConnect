@@ -1,58 +1,113 @@
 <template>
-  <v-container>
-    <v-row justify="center">
-      <v-col cols="12" sm="8" md="6">
-        <v-card class="text-center">
-          <v-card-text>
-            <div class="headline">Ovo je Homepage Career Connect</div>
-          </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
+  <v-main class="background">
+    <v-container>
+      <v-row justify="center">
+        <v-col cols="12" sm="8" md="6">
+          <v-card class="text-center" style="max-width: 1000px">
+            <v-card-text>
+              <div class="head" style="font-weight: bold; font-size: 30px;">Career Connect</div>
+            </v-card-text>
+            <v-card-text>
+              <div class="head" style="font-weight: bold; font-size: 25px">Najbolje mjesto za potražnju poslova</div>
+            </v-card-text>
+          </v-card>
+        </v-col>
+      </v-row>
 
-    <v-row justify="center">
-      <v-col cols="12">
-        <v-carousel>
-          <v-carousel-item
-            v-for="(item, index) in carouselItems"
-            :key="index"
-            :src="item.src"
-            cover
-          ></v-carousel-item>
-        </v-carousel>
-      </v-col>
-    </v-row>
+      <v-row style="margin-left: -38px; margin-right: -100px">
+        <v-col
+          v-for="(job, index) in jobs"
+          :key="index"
+          class="d-flex child-flex mt-5"
+          cols="4"
+        >
+          <v-card
+            class="mx-auto cardColor"
+            max-width="400"
+            style="margin: 0 20px"
+          >
+            <v-img
+              class="align-end text-white"
+              height="300"
+              :src="job.image"
+              contain
+            >
+            </v-img>
 
-    <v-row justify="center">
-      <v-footer app>
-        <v-spacer></v-spacer>
-        <!-- Razmak koji će postaviti gumbe na desnu stranu footer-a -->
-        <v-btn text color="primary" @click="handleOption1">Opcija 1</v-btn>
-        <v-btn text color="primary" @click="handleOption2">Opcija 2</v-btn>
-        <v-btn text color="primary" @click="handleOption3">Opcija 3</v-btn>
-      </v-footer>
-    </v-row>
-  </v-container>
+            <v-card-title class="black--text">{{ job.title }}</v-card-title>
+
+            <v-card-subtitle class="pt-4">{{ job.subtitle }}</v-card-subtitle>
+
+            <v-card-actions>
+              <v-btn color="orange"> Otvori </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-col>
+      </v-row>
+    </v-container>
+  </v-main>
 </template>
 
 <script>
-
 export default {
+  name: "Home",
   data() {
     return {
-      carouselItems: [
-        { src: "https://cdn.vuetifyjs.com/images/cards/docks.jpg" },
-        { src: "https://cdn.vuetifyjs.com/images/cards/hotel.jpg" },
-        { src: "https://cdn.vuetifyjs.com/images/cards/sunshine.jpg" },
-      ],
-    };
-  },
-  data_footer() {
-    return {
-      footerLinks: [
-        { text: "O nama", url: "/o-nama" },
-        { text: "Kontakt", url: "/kontakt" },
-        { text: "Uvjeti korištenja", url: "/uvjeti-koristenja" },
+      jobs: [
+        {
+          title: "Mc'Donalds",
+          subtitle: "Prijava do: 25.7.2024",
+          image:
+            "https://media.designrush.com/inspiration_images/134933/conversions/_1511456189_555_McDonald's-preview.jpg",
+        },
+        {
+          title: "Pepco",
+          subtitle: "Prijava do: 25.7.2024",
+          image:
+            "https://www.supernova-gardenmall.hr//fileadmin/shared/logos/Pepco.png",
+        },
+        {
+          title: "Studenac",
+          subtitle: "Prijava do: 25.7.2024",
+          image:
+            "https://cdn.aiidatapro.net/media/90/b7/dd/t780x490/90b7ddfd52bd306d8707cb838e0787bd.jpg",
+        },
+        {
+          title: "Muller",
+          subtitle: "Prijava do: 25.7.2024",
+          image:
+            "https://www.mueller.hr/assets/download/33/MuellerUeberBluete4c-2633.jpg",
+        },
+        {
+          title: "Lidl",
+          subtitle: "Prijava do: 25.7.2024",
+          image:
+            "https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Lidl-Logo.svg/768px-Lidl-Logo.svg.png",
+        },
+        {
+          title: "Decathlon",
+          subtitle: "Prijava do: 25.7.2024",
+          image:
+            "https://img-cdn.thepublive.com/fit-in/580x0/filters:format(webp)/socialsamosa/media/post_attachments/8beb3f26-145.jpg",
+        },
+        {
+          title: "Bauhaus",
+          subtitle: "Prijava do: 25.7.2024",
+          image:
+            "https://logos-world.net/wp-content/uploads/2022/04/Bauhaus-Symbol.png",
+        },
+        {
+          title: "Tommy Hilfiger",
+          subtitle: "Prijava do: 25.7.2024",
+          image:
+            "https://i.pinimg.com/736x/d3/09/1a/d3091a1a5350fede679b2c7461b0745b.jpg",
+        },
+        {
+          title: "Pevex",
+          subtitle: "Prijava do: 25.7.2024",
+          image:
+            "https://pevex.hr/Documents/relative_ckeditor/pevex_logo_zeleno.jpg",
+        },
       ],
     };
   },
@@ -67,8 +122,21 @@ export default {
 
 <style scoped>
 .headline {
-  font-size: 24px;
+  font-size: 200px;
   font-weight: bold;
   margin-bottom: 20px;
+}
+
+.head{
+  color: rgb(29, 29, 29);
+  font-family: 'Nunito', sans-serif;
+}
+
+.background {
+  background-color: rgb(159, 132, 255);
+}
+
+.cardColor {
+  background-color: rgb(210, 232, 255);
 }
 </style>
