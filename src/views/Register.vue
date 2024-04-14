@@ -1,138 +1,144 @@
 <template>
-  <v-container>
-    <v-row justify="center" class="mt-4">
-      <v-col cols="12" sm="8" md="6">
-        <v-card>
-          <v-card-title class="headline">Registracija</v-card-title>
-          <v-card-text>
-            <v-form ref="form" v-model="form">
-              <v-text-field
-                v-model="name"
-                :rules="[rules.required]"
-                label="Ime"
-                type="text"
-                required
-              ></v-text-field>
+  <v-main class="background" style="padding-top: 10px">
+    <v-container style="padding-bottom: 50px">
+      <v-row justify="center" class="mt-4">
+        <v-col cols="12" sm="8" md="6">
+          <v-card class="cardColor">
+            <v-card-title>Registracija</v-card-title>
+            <v-card-text>
+              <v-form ref="form" v-model="form">
+                <v-text-field
+                  v-model="name"
+                  :rules="[rules.required]"
+                  label="Ime"
+                  type="text"
+                  required
+                ></v-text-field>
 
-              <v-text-field
-                v-model="surname"
-                :rules="[rules.required]"
-                label="Prezime"
-                type="text"
-                required
-              ></v-text-field>
+                <v-text-field
+                  v-model="surname"
+                  :rules="[rules.required]"
+                  label="Prezime"
+                  type="text"
+                  required
+                ></v-text-field>
 
-              <v-dialog
-                ref="dialog"
-                v-model="modal"
-                :return-value.sync="date"
-                persistent
-                width="290px"
-              >
-                <template v-slot:activator="{ on, attrs }">
-                  <v-text-field
-                    v-model="date"
-                    label="Odaberite datum rođenja"
-                    prepend-icon="mdi-calendar"
-                    readonly
-                    v-bind="attrs"
-                    v-on="on"
-                  ></v-text-field>
-                </template>
-                <v-date-picker v-model="date" scrollable>
-                  <v-spacer></v-spacer>
-                  <v-btn text color="primary" @click="modal = false">
-                    Cancel
-                  </v-btn>
-                  <v-btn text color="primary" @click="$refs.dialog.save(date)">
-                    OK
-                  </v-btn>
-                </v-date-picker>
-              </v-dialog>
+                <v-dialog
+                  ref="dialog"
+                  v-model="modal"
+                  :return-value.sync="date"
+                  persistent
+                  width="290px"
+                >
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-text-field
+                      v-model="date"
+                      label="Odaberite datum rođenja"
+                      prepend-icon="mdi-calendar"
+                      readonly
+                      v-bind="attrs"
+                      v-on="on"
+                    ></v-text-field>
+                  </template>
+                  <v-date-picker v-model="date" scrollable>
+                    <v-spacer></v-spacer>
+                    <v-btn text color="primary" @click="modal = false">
+                      Cancel
+                    </v-btn>
+                    <v-btn
+                      text
+                      color="primary"
+                      @click="$refs.dialog.save(date)"
+                    >
+                      OK
+                    </v-btn>
+                  </v-date-picker>
+                </v-dialog>
 
-              <v-text-field
-                v-model="email"
-                :rules="[rules.email, rules.required]"
-                label="Email"
-                type="email"
-                required
-              ></v-text-field>
+                <v-text-field
+                  v-model="email"
+                  :rules="[rules.email, rules.required]"
+                  label="Email"
+                  type="email"
+                  required
+                ></v-text-field>
 
-              <v-text-field
-                v-model="password"
-                :rules="[rules.password, rules.length(6), rules.required]"
-                counter="6"
-                label="Lozinka"
-                type="password"
-                required
-              ></v-text-field>
+                <v-text-field
+                  v-model="password"
+                  :rules="[rules.password, rules.length(6), rules.required]"
+                  counter="6"
+                  label="Lozinka"
+                  type="password"
+                  required
+                ></v-text-field>
 
-              <v-text-field
-                v-model="confirmPassword"
-                :rules="[rules.password, rules.length(6), rules.required]"
-                counter="6"
-                label="Potvrdi lozinku"
-                type="password"
-                required
-              ></v-text-field>
+                <v-text-field
+                  v-model="confirmPassword"
+                  :rules="[rules.password, rules.length(6), rules.required]"
+                  counter="6"
+                  label="Potvrdi lozinku"
+                  type="password"
+                  required
+                ></v-text-field>
 
-              <v-select
-                label="Uloga"
-                :items="users"
-                v-model="userTIP"
-                :rules="[rules.required]"
-              ></v-select>
+                <v-select
+                  label="Uloga"
+                  :items="users"
+                  v-model="userTIP"
+                  :rules="[rules.required]"
+                ></v-select>
 
-              <v-text-field
-                v-if="userTIP === 'Poslodavac'"
-                v-model="interest"
-                :rules="[rules.required]"
-                label="Zanimanje"
-                type="text"
-                required
-              ></v-text-field>
+                <v-text-field
+                  v-if="userTIP === 'Poslodavac'"
+                  v-model="interest"
+                  :rules="[rules.required]"
+                  label="Zanimanje"
+                  type="text"
+                  required
+                ></v-text-field>
 
-              <v-text-field
-                v-if="userTIP === 'Poslodavac'"
-                v-model="telephone"
-                :rules="[rules.telephoneNumber, rules.required]"
-                label="Telefonski broj"
-                type="tel"
-                required
-              ></v-text-field>
+                <v-text-field
+                  v-if="userTIP === 'Poslodavac'"
+                  v-model="telephone"
+                  :rules="[rules.telephoneNumber, rules.required]"
+                  label="Telefonski broj"
+                  type="tel"
+                  required
+                ></v-text-field>
 
-              <v-text-field
-                v-if="userTIP === 'Poslodavac'"
-                v-model="companyName"
-                :rules="[rules.required]"
-                label="Naziv tvrtke"
-                type="text"
-                required
-              ></v-text-field>
+                <v-text-field
+                  v-if="userTIP === 'Poslodavac'"
+                  v-model="companyName"
+                  :rules="[rules.required]"
+                  label="Naziv tvrtke"
+                  type="text"
+                  required
+                ></v-text-field>
 
-              <v-text-field
-                v-if="userTIP === 'Poslodavac'"
-                v-model="companyAddress"
-                :rules="[rules.required]"
-                label="Adresa tvrtke"
-                type="text"
-                required
-              ></v-text-field> 
+                <v-text-field
+                  v-if="userTIP === 'Poslodavac'"
+                  v-model="companyAddress"
+                  :rules="[rules.required]"
+                  label="Adresa tvrtke"
+                  type="text"
+                  required
+                ></v-text-field>
 
-              <v-btn
-                :disabled="!form"
-                :loading="isLoading"
-                color="primary"
-                type="button"
-                @click="signup()"
-                >Registriraj se</v-btn
-              >
-            </v-form>
-          </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
-  </v-container>
+                <v-btn
+                  :disabled="!form"
+                  :loading="isLoading"
+                  color="primary"
+                  type="button"
+                  @click="signup()"
+                  >Registriraj se</v-btn
+                >
+              </v-form>
+            </v-card-text>
+          </v-card>
+        </v-col>
+      </v-row>
+    </v-container>
+  </v-main>
 </template>
 
 <script>
@@ -141,7 +147,7 @@ import {
   auth,
   db,
   setDoc,
-  createUserWithEmailAndPassword
+  createUserWithEmailAndPassword,
 } from "@/firebase";
 
 export default {
@@ -159,8 +165,7 @@ export default {
     companyAddress: null,
     password: null,
     confirmPassword: null,
-    defaultURL:
-      "https://firebasestorage.googleapis.com/v0/b/careerconnect-a82ba.appspot.com/o/Default%20images%2Fbasic-profile.jpg?alt=media&token=223a86e9-7508-4c52-9224-59a89136c275",
+
     date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
       .toISOString()
       .substr(0, 10),
@@ -198,41 +203,41 @@ export default {
     },
 
     saveAdditionalData(
-  email,
-  name,
-  surname,
-  password,
-  usertype,
-  birthDate,
-  companyName,
-  companyAddress,
-  interest,
-  telephone
-) {
-  if (usertype === "Poslodavac") {
-    setDoc(doc(db, "Users", email.toLowerCase()), {
-      Name: name,
-      Surname: surname,
-      Email: email,
-      Password: password,
-      Birthdate: birthDate,
-      AuthorisationType: usertype,
-      CompanyName: companyName,
-      CompanyAddress: companyAddress,
-      Interest: interest,
-      TelephoneNumber: telephone
-    });
-  } else {
-    setDoc(doc(db, "Users", email.toLowerCase()), {
-      Name: name,
-      Surname: surname,
-      Email: email,
-      Password: password,
-      Birthdate: birthDate,
-      AuthorisationType: usertype
-    });
-  }
-},
+      email,
+      name,
+      surname,
+      password,
+      usertype,
+      birthDate,
+      companyName,
+      companyAddress,
+      interest,
+      telephone
+    ) {
+      if (usertype === "Poslodavac") {
+        setDoc(doc(db, "Users", email.toLowerCase()), {
+          Name: name,
+          Surname: surname,
+          Email: email,
+          Password: password,
+          Birthdate: birthDate,
+          AuthorisationType: usertype,
+          CompanyName: companyName,
+          CompanyAddress: companyAddress,
+          Interest: interest,
+          TelephoneNumber: telephone,
+        });
+      } else {
+        setDoc(doc(db, "Users", email.toLowerCase()), {
+          Name: name,
+          Surname: surname,
+          Email: email,
+          Password: password,
+          Birthdate: birthDate,
+          AuthorisationType: usertype,
+        });
+      }
+    },
     signup() {
       if (this.password === this.confirmPassword) {
         const email = this.email;
@@ -279,5 +284,13 @@ export default {
 <style scoped>
 .headline {
   text-align: center;
+}
+
+.background {
+  background-color: rgb(159, 132, 256);
+}
+
+.cardColor {
+  background-color: rgb(230, 242, 255);
 }
 </style>

@@ -1,6 +1,6 @@
 <template>
-  <v-main class="background">
-    <v-container>
+  <v-main class="background" style="padding-top: 25px">
+    <v-container style="padding-bottom: 50px">
       <v-row justify="center">
         <v-col cols="12" sm="8" md="6">
           <v-card class="text-center" style="max-width: 1000px">
@@ -137,6 +137,6 @@ export default {
 }
 
 .cardColor {
-  background-color: rgb(210, 232, 255);
+  background-color: rgb(230, 242, 255);
 }
 </style>
