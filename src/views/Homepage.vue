@@ -1,28 +1,49 @@
 <template>
   <v-main class="background" style="padding-top: 25px">
-    <v-container style="padding-bottom: 50px">
+    <v-container
+      :style="
+        filteredJobs.length === 0
+          ? 'padding-bottom: 405px;'
+          : 'padding-bottom: 50px;'
+      "
+    >
       <v-row justify="center">
         <v-col cols="12" sm="8" md="6">
-          <v-card class="text-center" style="max-width: 1000px">
-            <v-card-text>
-              <div class="head" style="font-weight: bold; font-size: 30px;">Career Connect</div>
+          <v-card class="cardColor" style="max-width: 1000px">
+            <v-card-text class="text-center">
+              <div class="head" style="font-weight: bold; font-size: 30px">
+                Career Connect
+              </div>
             </v-card-text>
-            <v-card-text>
-              <div class="head" style="font-weight: bold; font-size: 25px">Najbolje mjesto za potražnju poslova</div>
+            <v-card-text class="text-center">
+              <div class="head" style="font-weight: bold; font-size: 25px">
+                Najbolje mjesto za potražnju poslova
+              </div>
             </v-card-text>
           </v-card>
         </v-col>
       </v-row>
 
-      <v-row justify="center" style="margin-left: -110px; margin-right: -110px; padding-top: 30px">
+      <v-row justify="center">
         <v-col cols="12" sm="8" md="6">
-          <v-text-field
-            v-model="search"
-            label="Pretraži poslove"
-            placeholder="Unesite naziv posla ili grad"
-            outlined
-            color= black;
-          ></v-text-field>
+          <v-card
+            class="cardColor"
+            max-width="600"
+            style="margin: -10px; padding-top: 35px"
+          >
+            <v-row justify="center">
+              <v-col cols="12" sm="8" md="6">
+                <v-text-field
+                  v-model="search"
+                  label="Pretraži poslove"
+                  placeholder="Unesite naziv posla ili grad"
+                  outlined
+                  color="black;"
+                  style="margin: 0 auto"
+                ></v-text-field>
+              </v-col>
+            </v-row>
+          </v-card>
         </v-col>
       </v-row>
 
@@ -46,12 +67,14 @@
             >
             </v-img>
 
-            <v-card-title class="black--text">{{ job.title }}</v-card-title>
+            <v-card-title class="black--text"></v-card-title>
 
-            <v-card-subtitle class="pt-4">{{ job.subtitle }}</v-card-subtitle>
+            <v-card-subtitle class="pt-4"></v-card-subtitle>
 
             <v-card-actions>
-              <v-btn color="orange"> Otvori </v-btn>
+              <v-btn color="black" text to="/job">
+                Otvori
+              </v-btn>
             </v-card-actions>
           </v-card>
         </v-col>
@@ -126,9 +149,10 @@ export default {
   },
   computed: {
     filteredJobs() {
-      return this.jobs.filter(job =>
-        job.title.toLowerCase().includes(this.search.toLowerCase()) ||
-        job.subtitle.toLowerCase().includes(this.search.toLowerCase())
+      return this.jobs.filter(
+        (job) =>
+          job.title.toLowerCase().includes(this.search.toLowerCase()) ||
+          job.subtitle.toLowerCase().includes(this.search.toLowerCase())
       );
     },
   },
@@ -148,9 +172,9 @@ export default {
   margin-bottom: 20px;
 }
 
-.head{
+.head {
   color: rgb(29, 29, 29);
-  font-family: 'Nunito', sans-serif;
+  font-family: "Nunito", sans-serif;
 }
 
 .background {
@@ -158,6 +182,6 @@ export default {
 }
 
 .cardColor {
-  background-color: rgb(230, 242, 255);
+  background-color: rgb(216, 235, 255);
 }
 </style>

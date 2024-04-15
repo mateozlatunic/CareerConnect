@@ -85,6 +85,6 @@ export default {
 }
 
 .cardColor {
-  background-color: rgb(230, 242, 255);
+  background-color: rgb(216, 235, 255);
 }
 </style>
