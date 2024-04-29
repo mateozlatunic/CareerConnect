@@ -14,21 +14,17 @@
       </v-row>
 
       <!-- Kartica 1 -->
-      <div
-        class="card"
-        style="
-          margin: 50px;
-          margin-right: 250px;
-          background-color: white;
-          margin-left: 250px;
-        "
-      >
-        <h2>Opis posla (m/ž)</h2>
-        <div class="info"><strong>Poslodavac:</strong><span>XXX</span></div>
-        <div class="info"><strong>Kategorija:</strong><span>XXX</span></div>
-        <div class="info"><strong>Mjesto rada:</strong><span>XXX</span></div>
-        <div class="info"><strong>Rok prijave:</strong><span>XXX</span></div>
-        <div class="info"><strong>Plaća:</strong><span>XXX</span></div>
+      <div v-if="selectedJob">
+        <h2>{{ selectedJob.employer }}</h2>
+        <p>Kategorija: {{ selectedJob.category }}</p>
+        <p>Radno mjesto: {{ selectedJob.workplace }}</p>
+        <p>Rok prijave: {{ selectedJob.deadline }}</p>
+        <p>Plaća: {{ selectedJob.salary }}</p>
+        <p>Opis posla: {{ selectedJob.jobDescription }}</p>
+        <p>Vrsta posla: {{ selectedJob.jobType }}</p>
+        <p>Županija: {{ selectedJob.county }}</p>
+        <p>Potrebne vještine: {{ selectedJob.skills }}</p>
+        <p>Jezici: {{ selectedJob.language }}</p>
       </div>
 
       <!-- Kartica 2 -->
@@ -123,19 +119,157 @@
   </v-main>
 </template>
 
-
 <script>
-import { defineComponent } from '@vue/composition-api'
+// import { defineComponent } from "@vue/composition-api";
+// import { useRoute } from "vue-router";
 
-export default defineComponent({
-    name: 'Job',
-    setup() {
-        
-    },
-})
+export default {
+  name: "Job",
+  data() {
+    return {
+      selectedJob: null,
+      jobs: [
+        // Job 1 - McDonalds
+        {
+          employer: "Mc'Donalds Inc.",
+          category: "Turizam i ugostiteljstvo",
+          workplace: "Varaždin",
+          deadline: "25.7.2024",
+          salary: "800€",
+          jobDescription:
+            "Rad oko blagajne, priprema hrane, posluživanje kupaca i čišćenje radnog prostora",
+          jobType: "Stalni radni odnos",
+          county: "Varaždinska županija",
+          skills: "Rad u timu, komunikacijske vještine",
+          language: "Hrvatski, engleski",
+        },
+        // Job 2 - Pepco
+        {
+          employer: "Pepco",
+          category: "Trgovina",
+          workplace: "Karlovac",
+          deadline: "20.6.2024",
+          salary: "850€",
+          jobDescription:
+            "Prodaja tekstila, kućnih potrepština i dekorativnih predmeta, savjetovanje kupaca i održavanje urednosti trgovine.",
+          jobType: "Puno radno vrijeme",
+          county: "Karlovačka županija",
+          skills: "Poznavanje asortimana, komunikacijske vještine",
+          language: "Hrvatski",
+        },
+
+        // Job 3 - Studenac
+        {
+          employer: "Studenac",
+          category: "Trgovina",
+          workplace: "Umag",
+          deadline: "15.7.2024",
+          salary: "800€",
+          jobDescription:
+            "Rad na blagajni, izdavanje računa, naplata robe i pružanje informacija kupcima.",
+          jobType: "Puno radno vrijeme",
+          county: "Istarska županija",
+          skills: "Rad na blagajni, komunikacijske vještine",
+          language: "Hrvatski",
+        },
+
+        // Job 4 - Muller
+        {
+          employer: "Muller",
+          category: "Trgovina",
+          workplace: "Pula",
+          deadline: "21.5.2024",
+          salary: "800€",
+          jobDescription:
+            "Rad u trgovini, usluživanje kupaca, vođenje blagajne i održavanje urednosti prodajnog prostora.",
+          jobType: "Puno radno vrijeme",
+          county: "Istarska županija",
+          skills: "Komunikacijske vještine, prodajne vještine",
+          language: "Hrvatski",
+        },
+        // Job 5 - Lidl
+        {
+          employer: "Lidl",
+          category: "Trgovina",
+          workplace: "Split",
+          deadline: "30.6.2024",
+          salary: "850€",
+          jobDescription:
+            "Odgovornosti uključuju rad na blagajni, punjenje polica, pomoć kupcima i održavanje čistoće u trgovini.",
+          jobType: "Puno radno vrijeme",
+          county: "Splitsko-dalmatinska županija",
+          skills: "Komunikacijske vještine, rad u timu",
+          language: "Hrvatski",
+        },
+
+        // Job 6 - Decathlon
+        {
+          employer: "Decathlon",
+          category: "Sport i rekreacija",
+          workplace: "Rovinj",
+          deadline: "15.7.2024",
+          salary: "900€",
+          jobDescription:
+            "Savjetovanje kupaca o sportskoj opremi, rad na blagajni i održavanje reda u trgovini.",
+          jobType: "Puno radno vrijeme",
+          county: "Istarska županija",
+          skills: "Poznavanje sportske opreme, komunikacijske vještine",
+          language: "Hrvatski, engleski",
+        },
+
+        // Job 7 - Bauhaus
+        {
+          employer: "Bauhaus",
+          category: "Trgovina",
+          workplace: "Poreč",
+          deadline: "10.7.2024",
+          salary: "850€",
+          jobDescription:
+            "Prodaja građevinskog materijala, pomoć kupcima, izrada računa i održavanje urednosti prodajnog prostora.",
+          jobType: "Puno radno vrijeme",
+          county: "Istarska županija",
+          skills: "Poznavanje građevinskih materijala, komunikacijske vještine",
+          language: "Hrvatski",
+        },
+
+        // Job 8 - Tommy Hilfiger
+        {
+          employer: "Tommy Hilfiger",
+          category: "Moda",
+          workplace: "Karlovac",
+          deadline: "20.6.2024",
+          salary: "900€",
+          jobDescription:
+            "Prodaja odjeće i modnih dodataka, pružanje savjeta kupcima i održavanje urednosti trgovine.",
+          jobType: "Puno radno vrijeme",
+          county: "Karlovačka županija",
+          skills: "Poznavanje modne industrije, komunikacijske vještine",
+          language: "Hrvatski",
+        },
+
+        // Job 9 - Pevex
+        {
+          employer: "Pevex",
+          category: "Trgovina",
+          workplace: "Poreč",
+          deadline: "15.7.2024",
+          salary: "850€",
+          jobDescription:
+            "Asistencija u prodaji kućanskih aparata, pomoć kupcima, izrada računa i održavanje urednosti prodajnog prostora.",
+          jobType: "Puno radno vrijeme",
+          county: "Istarska županija",
+          skills: "Poznavanje kućanskih aparata, komunikacijske vještine",
+          language: "Hrvatski",
+        },
+      ],
+    };
+  },
+  created() {
+    const jobId = this.$route.params.id;
+    this.selectedJob = this.jobs[parseInt(jobId, 10)];
+  },
+};
 </script>
-
-
 
 <style scoped>
 .card {

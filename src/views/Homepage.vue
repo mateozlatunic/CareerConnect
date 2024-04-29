@@ -67,12 +67,11 @@
             >
             </v-img>
 
-            <v-card-title class="black--text"></v-card-title>
+            <v-card-title class="black--text">{{ job.title }}</v-card-title>
+            <v-card-subtitle class="pt-4">{{ job.subtitle }}</v-card-subtitle>
 
-            <v-card-subtitle class="pt-4"></v-card-subtitle>
-
-            <v-card-actions>
-              <v-btn color="black" text to="/job">
+            <v-card-actions >
+              <v-btn color="orange" white :to="{ name: 'Job', params: { id: index }}">
                 Otvori
               </v-btn>
             </v-card-actions>
@@ -157,9 +156,8 @@ export default {
     },
   },
   methods: {
-    redirectTo(url) {
-      // Ovdje možete implementirati logiku za preusmjeravanje na određenu URL adresu
-      console.log("Redirect to:", url);
+    redirectToJob(job) {
+      this.$router.push({ name: 'Job', params: { job: job } });
     },
   },
 };

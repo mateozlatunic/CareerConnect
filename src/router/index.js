@@ -32,8 +32,10 @@ const routes = [
   {
     path: '/job',
     name: 'Job',
-    component: job
-  },
+    component: job,
+    props: true // This enables passing route params as props to the component
+  }
+  ,
 ]
 
 const router = new VueRouter({
