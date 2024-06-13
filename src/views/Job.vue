@@ -13,57 +13,99 @@
         </v-col>
       </v-row>
 
-      <!-- Kartica 1 -->
-      <div v-if="selectedJob">
-        <h2>{{ selectedJob.employer }}</h2>
-        <p>Kategorija: {{ selectedJob.category }}</p>
-        <p>Radno mjesto: {{ selectedJob.workplace }}</p>
-        <p>Rok prijave: {{ selectedJob.deadline }}</p>
-        <p>Plaća: {{ selectedJob.salary }}</p>
-        <p>Opis posla: {{ selectedJob.jobDescription }}</p>
-        <p>Vrsta posla: {{ selectedJob.jobType }}</p>
-        <p>Županija: {{ selectedJob.county }}</p>
-        <p>Potrebne vještine: {{ selectedJob.skills }}</p>
-        <p>Jezici: {{ selectedJob.language }}</p>
-      </div>
+      <v-row class="job-info-row">
+        <!-- Kartica sa slikom/logom -->
+        <v-col cols="12" sm="4" md="3">
+          <v-card class="mx-auto cardColor" max-width="300">
+            <v-img
+              class="align-end text-white"
+              height="200"
+              :src="selectedJob.image"
+              contain
+            ></v-img>
+          </v-card>
+        </v-col>
+        <!-- Kartica sa sadržajem posla -->
+        <v-col cols="12" sm="8" md="9">
+          <div class="card" style="background-color: white">
+            <div v-if="selectedJob">
+              <h2>{{ selectedJob.employer }}</h2>
+              <p>
+                Kategorija: <i>{{ selectedJob.category }}</i>
+              </p>
+              <p>
+                Radno mjesto: <i>{{ selectedJob.workplace }}</i>
+              </p>
+              <p>
+                Rok prijave: <i>{{ selectedJob.deadline }}</i>
+              </p>
+              <p>
+                Plaća: <i>{{ selectedJob.salary }}</i>
+              </p>
+              <p>
+                Opis posla: <i>{{ selectedJob.jobDescription }}</i>
+              </p>
+              <p>
+                Vrsta posla: <i>{{ selectedJob.jobType }}</i>
+              </p>
+              <p>
+                Županija: <i>{{ selectedJob.county }}</i>
+              </p>
+              <p>
+                Potrebne vještine: <i>{{ selectedJob.skills }}</i>
+              </p>
+              <p>
+                Jezici: <i>{{ selectedJob.language }}</i>
+              </p>
+            </div>
+          </div>
+        </v-col>
+      </v-row>
 
-      <!-- Kartica 2 -->
-      <div
-        class="card"
-        style="
-          margin: 50px;
-          margin-right: 200px;
-          background-color: white;
-          margin-left: 190px;
-        "
-      >
-        <h2>O poslu</h2>
-        <strong>Opis radnog mjesta:</strong>
-        <p>xxxxxxxxxxxxxxxxxxx</p>
-        <strong>Vrsta posla:</strong>
-        <p>xxxxxxxxxxxxxxxxxxx</p>
-        <strong>Županija:</strong>
-        <p>xxxxxxxxxxxxxxxxxxx</p>
-      </div>
+      <!-- Ostale kartice -->
+      <v-row class="job-info-row">
+        <v-col cols="12">
+          <div class="card" style="background-color: white">
+            <h2>O poslu:</h2>
+            <ul style="margin-left: 25px">
+              <li v-for="item in selectedJob.jobDetails.aboutJob" :key="item">
+                {{ item }}
+              </li>
+            </ul>
+          </div>
+        </v-col>
+      </v-row>
 
-      <!-- Kartica 3 -->
-      <div
-        class="card"
-        style="
-          margin: 50px;
-          margin-right: 200px;
-          background-color: white;
-          margin-left: 190px;
-        "
-      >
-        <h2>O zaposleniku</h2>
+      <v-row class="job-info-row">
+        <v-col cols="12">
+          <div class="card" style="background-color: white">
+            <h2>Nudimo Vam:</h2>
+            <ul style="margin-left: 25px">
+              <li v-for="item in selectedJob.jobDetails.weOffer" :key="item">
+                {{ item }}
+              </li>
+            </ul>
+          </div>
+        </v-col>
+      </v-row>
 
-        <strong>Znanja i kvalifikacije:</strong>
-        <p>xxxxxxxxxxxxxxxxxxx</p>
-        <strong>Strani jezik:</strong>
-        <p>xxxxxxxxxxxxxxxxxxx</p>
-      </div>
+      <v-row class="job-info-row">
+        <v-col cols="12">
+          <div class="card" style="background-color: white">
+            <h2>Od Vas Očekujemo:</h2>
+            <ul style="margin-left: 25px">
+              <li
+                v-for="item in selectedJob.jobDetails.expectations"
+                :key="item"
+              >
+                {{ item }}
+              </li>
+            </ul>
+          </div>
+        </v-col>
+      </v-row>
 
+      <!-- Forma prijave posla -->
       <v-row justify="center" style="padding-bottom: 40px">
         <v-col cols="12" sm="8" md="6">
           <v-card class="pa-5, cardColor">
@@ -120,17 +162,15 @@
 </template>
 
 <script>
-// import { defineComponent } from "@vue/composition-api";
-// import { useRoute } from "vue-router";
-
 export default {
   name: "Job",
   data() {
     return {
       selectedJob: null,
       jobs: [
-        // Job 1 - McDonalds
         {
+          image:
+            "https://media.designrush.com/inspiration_images/134933/conversions/_1511456189_555_McDonald's-preview.jpg",
           employer: "Mc'Donalds Inc.",
           category: "Turizam i ugostiteljstvo",
           workplace: "Varaždin",
@@ -139,12 +179,37 @@ export default {
           jobDescription:
             "Rad oko blagajne, priprema hrane, posluživanje kupaca i čišćenje radnog prostora",
           jobType: "Stalni radni odnos",
-          county: "Varaždinska županija",
+          county: "Varaždinska",
           skills: "Rad u timu, komunikacijske vještine",
           language: "Hrvatski, engleski",
+          jobDetails: {
+            aboutJob: [
+              "priprema i posluživanje ukusnih burgera, pomfrita i ostalih McDonald's specijaliteta našim gostima",
+              "održavanje čistoće i higijene na radnom mjestu i u restoranu",
+              "rad na blagajni i obračunavanje narudžbi",
+              "pružanje prijateljske i uslužne usluge našim gostima",
+              "pobrinuti se da naši gosti imaju ugodno i zadivljujuće iskustvo",
+            ],
+            weOffer: [
+              "Organizirane i zabavne obuke za nove zaposlenike",
+              "Mogućnost napredovanja i razvoja karijere unutar McDonald'sa",
+              "Fleksibilno radno vrijeme koje odgovara studentima",
+              "Konkurentnu plaću i dodatne bonuse",
+              "Mogućnost rada u timu i upoznavanje novih ljudi",
+              "Rad u dinamičnom i uzbudljivom okruženju",
+            ],
+            expectations: [
+              "Da si motiviran/a i željan/a raditi",
+              "Da imaš dobru komunikaciju i timski duh",
+              "Da ćeš biti odgovoran/na po pitanju svojih obaveza",
+              "Da si pouzdan/a i da ti se može vjerovati",
+              "Da ti je rad s ljudima i pružanje izvrsne usluge zabavno",
+            ],
+          },
         },
-        // Job 2 - Pepco
         {
+          image:
+            "https://www.supernova-gardenmall.hr//fileadmin/shared/logos/Pepco.png",
           employer: "Pepco",
           category: "Trgovina",
           workplace: "Karlovac",
@@ -152,14 +217,39 @@ export default {
           salary: "850€",
           jobDescription:
             "Prodaja tekstila, kućnih potrepština i dekorativnih predmeta, savjetovanje kupaca i održavanje urednosti trgovine.",
-          jobType: "Puno radno vrijeme",
-          county: "Karlovačka županija",
+          jobType: "Puno/Nepuno radno vrijeme",
+          county: "Karlovačka",
           skills: "Poznavanje asortimana, komunikacijske vještine",
           language: "Hrvatski",
+          jobDetails: {
+            aboutJob: [
+              "rad u dinamičnom timu i doprinos izvrsnoj usluzi kupcima",
+              "izlaganje robe, briga o zalihama i održavanje urednosti prodajnog prostora",
+              "pružanje pomoći kupcima pri odabiru proizvoda i odgovaranje na njihova pitanja",
+              "rad na blagajni i obračunavanje transkacija",
+              "održavanje higijene i čistoće na radnom mjestu",
+            ],
+            weOffer: [
+              "mogućnost rada na puno ili nepuno radno vrijeme, fleksibilno u skladu s tvojim potrebama",
+              "organizirane treninge i edukacije za nove zaposlenike",
+              "mogućnost napredovanja i razvoja karijere u okviru firme",
+              "rad u mladom i dinamičnom kolektivu",
+              "godišnji odmor i plaćeni bolesnički dopust",
+              "naknada za prijevoz",
+              "popuste na kupnju PEPCO proizvoda",
+            ],
+            expectations: [
+              "motiviranost i želja za radom",
+              "dobru omunikaciju i timski duh",
+              "odgovornost i pouzdanost da ti se može vjerovati",
+              "da si spreman/a učiti i raditi u brzom tempu",
+              "iskustvo rada u trgovini je prednost, ali nije nužno",
+            ],
+          },
         },
-
-        // Job 3 - Studenac
         {
+          image:
+            "https://cdn.aiidatapro.net/media/90/b7/dd/t780x490/90b7ddfd52bd306d8707cb838e0787bd.jpg",
           employer: "Studenac",
           category: "Trgovina",
           workplace: "Umag",
@@ -168,27 +258,85 @@ export default {
           jobDescription:
             "Rad na blagajni, izdavanje računa, naplata robe i pružanje informacija kupcima.",
           jobType: "Puno radno vrijeme",
-          county: "Istarska županija",
+          county: "Istarska",
           skills: "Rad na blagajni, komunikacijske vještine",
           language: "Hrvatski",
+          jobDetails: {
+            aboutJob: [
+              "izlaganje robe te briga o rokovima, cjenovnom označavanju i popunjenosti odjela",
+              "pružanje izvrsne usluge našim kupcima na svježim odjelima",
+              "rad na blagajni",
+              "kontrola kvalitete i svježine proizvoda te roka trajanja robe",
+              "održavanje urednosti prodajnog mjesta",
+            ],
+            weOffer: [
+              "organizirane obuke za nove zaposlenike",
+              "novčani bonus za realiziranu preporuku novih kandidata",
+              "mogućnost dodatne zarade kroz transparentan sustav bonusa",
+              "mogućnost dobivanja dodatne mjesečne plaće kroz poseban program nagrada-Najbolja prodavaonica mjeseca",
+              "mogućnost rada na puno ili nepuno radno vrijeme",
+              "mogućnost napredovanja, interne promocije",
+              "po želji, mogućnost putovanja i prilika za rad u drugim gradovima RH uz osiguran smještaj",
+              "dodatno plaćen rad nedjeljom",
+              "naknada za prijevoz",
+              "božićnica, uskrsnica, naknada za rođenje djeteta",
+              "dar za prvašiće i slobodan dan za prvi dan škole",
+              "jubilarne nagrade",
+              "zanimljiv, dinamičan i raznolik posao",
+              "mogućnost rasta i razvoja unutar kompanije",
+            ],
+            expectations: [
+              "razina obrazovanja SSS",
+              "poželjno radno iskustvo na istim ili sličnim poslovima",
+              "komunikativnost i sklonost timskom radu",
+              "urednost, pouzdanost te predanost poslu",
+              "radno iskustvo u trgovini je prednost",
+            ],
+          },
         },
-
-        // Job 4 - Muller
         {
+          image:
+            "https://www.mueller.hr/assets/download/33/MuellerUeberBluete4c-2633.jpg",
           employer: "Muller",
           category: "Trgovina",
           workplace: "Pula",
           deadline: "21.5.2024",
-          salary: "800€",
+          salary: "950€",
           jobDescription:
             "Rad u trgovini, usluživanje kupaca, vođenje blagajne i održavanje urednosti prodajnog prostora.",
           jobType: "Puno radno vrijeme",
           county: "Istarska županija",
           skills: "Komunikacijske vještine, prodajne vještine",
           language: "Hrvatski",
+          jobDetails: {
+            aboutJob: [
+              "rad na dinamičnoj prodajnoj poziciji s izravnim kontaktom s kupcima",
+              "izlaganje robe, briga o zalihama i održavanje urednosti prodajnog prostora",
+              "pružanje izvrsne usluge kupcima i savjetovanje pri odabiru proizvoda",
+              "rad na blagajni i obračun transkacija",
+              "održavanje higijene i čistoće na radnom mjestu",
+            ],
+            weOffer: [
+              "mogućnost rada na puno ili nepuno radno vrijeme",
+              "konkurentnu satnicu",
+              "organizirane treninge i edukacije",
+              "mogućnost napredovanja i razvoja karijere u okviru firme",
+              "godišnji odmor i plaćeni bolesnički dopust",
+              "naknada za prijevoz",
+              "popuste na kupnju Müller proizvoda",
+            ],
+            expectations: [
+              "motiviranost i želja za radom",
+              "dobru omunikaciju i timski duh",
+              "odgovornost i pouzdanost da ti se može vjerovati",
+              "da si spreman/a učiti i raditi u brzom tempu",
+              "iskustvo rada u trgovini je prednost, ali nije nužno",
+            ],
+          },
         },
-        // Job 5 - Lidl
         {
+          image:
+            "https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Lidl-Logo.svg/768px-Lidl-Logo.svg.png",
           employer: "Lidl",
           category: "Trgovina",
           workplace: "Split",
@@ -197,17 +345,44 @@ export default {
           jobDescription:
             "Odgovornosti uključuju rad na blagajni, punjenje polica, pomoć kupcima i održavanje čistoće u trgovini.",
           jobType: "Puno radno vrijeme",
-          county: "Splitsko-dalmatinska županija",
+          county: "Splitsko-dalmatinska",
           skills: "Komunikacijske vještine, rad u timu",
           language: "Hrvatski",
+          jobDetails: {
+            aboutJob: [
+              "budite dio dinamičnog tima i doprinesite izvrsnom kupcu iskustvu u našim trgovinama",
+              "održavajte police puna i uređene, brinite se o izlaganju robe i rokovima cjenovnog označavanja",
+              "pružajte srdačnu i profesionalnu uslugu našim kupcima, budite spremni odgovoriti na njihova pitanja i pomoći im pronaći željene proizvode",
+              "rad na blagajni i obračunavanje kupovine",
+              "održavajte čistoću i higijenu na radnom mjestu i u trgovini",
+            ],
+            weOffer: [
+              "organizirane treninge i edukacije za nove zaposlenike",
+              "konkurentnu studentsku satnicu s mogućnošću dodatne zarade kroz transparentan sustav bonusnih programa",
+              "mogućnost rada na puno ili nepuno radno vrijeme, fleksibilno u skladu s studenskim studijima",
+              "mogućnost napredovanja i razvoja karijere unutar Lidl Hrvatska",
+              "rad u dinamičnom okruženju",
+              "godišnji odmor i plaćeni bolesnički dopust",
+              "naknada za prijevoz",
+              "popuste na kupnju Lidl proizvoda",
+              "možnosti dodatnog edukiranja i osposobljavanja",
+            ],
+            expectations: [
+              "motiviranost, marljivost i želju za radom",
+              "komunikacijske vještine i timski duh",
+              "Da si odgovoran/a, pouzdan/a i da ti se može vjerovati",
+              "Da si spreman/a učiti i raditi u brzom tempu",
+              "Ispustvo rada u trgovini je prednost, ali nije nužno",
+            ],
+          },
         },
-
-        // Job 6 - Decathlon
         {
+          image:
+            "https://img-cdn.thepublive.com/fit-in/580x0/filters:format(webp)/socialsamosa/media/post_attachments/8beb3f26-145.jpg",
           employer: "Decathlon",
           category: "Sport i rekreacija",
           workplace: "Rovinj",
-          deadline: "15.7.2024",
+          deadline: "15.8.2024",
           salary: "900€",
           jobDescription:
             "Savjetovanje kupaca o sportskoj opremi, rad na blagajni i održavanje reda u trgovini.",
@@ -215,25 +390,85 @@ export default {
           county: "Istarska županija",
           skills: "Poznavanje sportske opreme, komunikacijske vještine",
           language: "Hrvatski, engleski",
+          jobDetails: {
+            aboutJob: [
+              "budi dio sportaške zajednice i doprinesi izvrsnom kupcu iskustvu u našim trgovinama",
+              "održavaj police puna opreme i uređene, budi spreman/a pomoći kupcima pronaći željeni sportski artikl",
+              "pružaj stručne savjete i informacije o sportskoj opremi i odjeći",
+              "budi spreman/a demonstrirati korištenje opreme i dati kupcima savjete za trening",
+              "rad na blagajni i obračunavanje kupovine",
+              "održavajte čistoću i higijenu na radnom mjestu i u trgovini",
+            ],
+            weOffer: [
+              "organizirane treninge i edukacije za nove zaposlenike o sportskoj opremi i odjeći",
+              "konkurentnu studentsku satnicu s mogućnošću dodatne zarade kroz transparentan sustav bonusnih programa",
+              "mogućnost rada na puno ili nepuno radno vrijeme, fleksibilno u skladu s studentskim studijima",
+              "popuste na kupnju Decathlon opreme i odjeće",
+              "mogućnost sudjelovanja u sportskim aktivnostima i programima",
+              "rad u mladom i dinamičnom kolektivu",
+              "godišnji odmor i plaćeni bolesnički dopust",
+              "naknada za pijevoz",
+              "možnosti dodatnog edukiranja i osposobljavanja u području sporta",
+            ],
+            expectations: [
+              "razina obrazovanja SSS",
+              "poželjno radno iskustvo na istim ili sličnim poslovima",
+              "komunikativnost i sklonost timskom radu",
+              "urednost, pouzdanost te predanost poslu",
+              "radno iskustvo u trgovini je prednost",
+            ],
+          },
         },
-
-        // Job 7 - Bauhaus
         {
+          image:
+            "https://logos-world.net/wp-content/uploads/2022/04/Bauhaus-Symbol.png",
           employer: "Bauhaus",
           category: "Trgovina",
           workplace: "Poreč",
-          deadline: "10.7.2024",
+          deadline: "10.9.2024",
           salary: "850€",
           jobDescription:
             "Prodaja građevinskog materijala, pomoć kupcima, izrada računa i održavanje urednosti prodajnog prostora.",
           jobType: "Puno radno vrijeme",
-          county: "Istarska županija",
+          county: "Istarska",
           skills: "Poznavanje građevinskih materijala, komunikacijske vještine",
           language: "Hrvatski",
+          jobDetails: {
+            aboutJob: [
+              "izlaganje robe te briga o rokovima, cjenovnom označavanju i popunjenosti odjela",
+              "pružanje izvrsne usluge našim kupcima na svježim odjelima",
+              "rad na blagajni",
+              "kontrola kvalitete i svježine proizvoda te roka trajanja robe",
+              "održavanje urednosti prodajnog mjesta",
+            ],
+            weOffer: [
+              "organizirane obuke za nove zaposlenike",
+              "novčani bonus za realiziranu preporuku novih kandidata",
+              "mogućnost dodatne zarade kroz transparentan sustav bonusa",
+              "mogućnost dobivanja dodatne mjesečne plaće kroz poseban program nagrada-Najbolja prodavaonica mjeseca",
+              "mogućnost rada na puno ili nepuno radno vrijeme",
+              "mogućnost napredovanja, interne promocije",
+              "po želji, mogućnost putovanja i prilika za rad u drugim gradovima RH uz osiguran smještaj",
+              "dodatno plaćen rad nedjeljom",
+              "naknada za prijevoz",
+              "božićnica, uskrsnica, naknada za rođenje djeteta",
+              "dar za prvašiće i slobodan dan za prvi dan škole",
+              "jubilarne nagrade",
+              "zanimljiv, dinamičan i raznolik posao",
+              "mogućnost rasta i razvoja unutar kompanije",
+            ],
+            expectations: [
+              "razina obrazovanja SSS",
+              "poželjno radno iskustvo na istim ili sličnim poslovima",
+              "komunikativnost i sklonost timskom radu",
+              "urednost, pouzdanost te predanost poslu",
+              "radno iskustvo u trgovini je prednost",
+            ],
+          },
         },
-
-        // Job 8 - Tommy Hilfiger
         {
+          image:
+            "https://i.pinimg.com/736x/d3/09/1a/d3091a1a5350fede679b2c7461b0745b.jpg",
           employer: "Tommy Hilfiger",
           category: "Moda",
           workplace: "Karlovac",
@@ -242,24 +477,76 @@ export default {
           jobDescription:
             "Prodaja odjeće i modnih dodataka, pružanje savjeta kupcima i održavanje urednosti trgovine.",
           jobType: "Puno radno vrijeme",
-          county: "Karlovačka županija",
+          county: "Karlovačka",
           skills: "Poznavanje modne industrije, komunikacijske vještine",
           language: "Hrvatski",
+          jobDetails: {
+            aboutJob: [
+              "budi dio modne ekipe i doprinesi izvrsnom kupcu iskustvu u našim trgovinama",
+              "održavaj uređene izloge i vitrine, budi spreman/na pomoći kupcima pronaći željeni odjećni komad",
+              "pružaj savjete o stilu i trendovima te kombiniraj odjeću prema željama kupaca",
+              "budi spreman/na raditi na blagajni i obračunavati kupovinu",
+              "održavajte čistoću i higijenu na radnom mjestu i u trgovini",
+            ],
+            weOffer: [
+              "organizirane treninge i edukacije za nove zaposlenike o modi i stilu",
+              "konkurentnu studentsku satnicu s mogućnošću dodatne zarade kroz transparentan sustav bonusnih programa",
+              "mogućnost rada na puno ili nepuno radno vrijeme, fleksibilno u skladu s tvojim studijama",
+              "popuste na kupnju Tommy Hilfiger odjeće",
+              "mogućnost sudjelovanja u modnim događajima i programima",
+              "rad u mladom i dinamičnom kolektivu",
+              "godišnji odmor i plaćeni bolesnički dopust",
+              "naknada za prijevoz",
+              "možnosti dodatnog edukiranja i osposobljavanja u području mode",
+            ],
+            expectations: [
+              "razina obrazovanja SSS",
+              "poželjno radno iskustvo na istim ili sličnim poslovima",
+              "komunikativnost i sklonost timskom radu",
+              "urednost, pouzdanost te predanost poslu",
+              "radno iskustvo u trgovini je prednost",
+            ],
+          },
         },
-
-        // Job 9 - Pevex
         {
+          image:
+            "https://pevex.hr/Documents/relative_ckeditor/pevex_logo_zeleno.jpg",
           employer: "Pevex",
           category: "Trgovina",
           workplace: "Poreč",
-          deadline: "15.7.2024",
+          deadline: "18.8.2024",
           salary: "850€",
           jobDescription:
             "Asistencija u prodaji kućanskih aparata, pomoć kupcima, izrada računa i održavanje urednosti prodajnog prostora.",
           jobType: "Puno radno vrijeme",
-          county: "Istarska županija",
+          county: "Istarska",
           skills: "Poznavanje kućanskih aparata, komunikacijske vještine",
           language: "Hrvatski",
+          jobDetails: {
+            aboutJob: [
+              "budi dio dinamičnog tima i doprinesi izvrsnom kupcu iskustvu u našim trgovinama",
+              "održavaj police puna i uređene, budi spreman/na pomoći kupcima pronaći željeni proizvod",
+              "pružaj savjete o proizvodima i budi upućen/a u ponudu trgovine",
+              "budi spreman/na raditi na blagajni i obračunavati kupovinu",
+              "održavaj čistoću i higijenu na radnom mjestu i u trgovini",
+            ],
+            weOffer: [
+              "organizirane treninge i edukacije za nove zaposlenike o proizvodima i uslugama",
+              "popuste na kupnju PEVEX proizvoda",
+              "mogućnost sudjelovanja u promotivnim aktivnostima i programima",
+              "rad u dinamičnom kolektivu",
+              "godišnji odmor i plaćeni bolesnički dopust",
+              "naknada za prevoz",
+              "mogućnost dodatnog edukiranja i osposobljavanja u trgovini",
+            ],
+            expectations: [
+              "razina obrazovanja SSS",
+              "poželjno radno iskustvo na istim ili sličnim poslovima",
+              "komunikativnost i sklonost timskom radu",
+              "urednost, pouzdanost te predanost poslu",
+              "interesovanje za trgovinu i rad s ljudima je prednost",
+            ],
+          },
         },
       ],
     };
@@ -292,11 +579,6 @@ button:hover {
   background-color: #45a049;
 }
 
-.position {
-  margin: 50px;
-  margin-right: 700px;
-}
-
 .head {
   color: rgb(29, 29, 29);
   font-family: "Nunito", sans-serif;
@@ -310,20 +592,17 @@ button:hover {
   background-color: rgb(216, 235, 255);
 }
 
-.info {
+.job-info-row {
+  margin: 20px 0;
+}
+
+.job-info-row .v-card {
+  padding: 0;
+}
+
+.job-info-row .v-col {
   display: flex;
-  justify-content: space-between;
-  margin-bottom: 10px; /* Dodaje malo prostora između redaka */
-}
-
-.info strong {
-  flex-basis: 40%; /* Zauzima fiksni postotak širine kontejnera */
-  background-color: white;
-}
-
-.info span {
-  flex-grow: 1;
-  text-align: right; /* Poravnava tekst na desno */
-  background-color: white;
+  justify-content: center;
+  align-items: center;
 }
 </style>
