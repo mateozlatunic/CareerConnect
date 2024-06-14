@@ -9,12 +9,13 @@
 
       <v-spacer></v-spacer>
 
-      <img v-show="isAuthenticated" class="profilna" :src="this.profilePicture">
-
-      &nbsp; {{ mail }} | &nbsp;
+      <div v-if="isAuthenticated">
+        &nbsp; {{ mail }} | &nbsp;
+      </div>
       <v-btn v-show="!isAuthenticated" text to="/login">Login</v-btn>
       <v-btn v-show="!isAuthenticated" text to="/register">Register</v-btn>
-      <v-btn v-show="isAuthenticated" @click.prevent="signOut()">LogOut</v-btn>
+      <v-btn v-show="isAuthenticated" text to="/profile">Profile</v-btn>
+      <v-btn v-show="isAuthenticated" @click.prevent="signOut">LogOut</v-btn>
     </v-app-bar>
 
     <v-main>
@@ -24,55 +25,44 @@
 </template>
 
 <script>
-import {
-  db,
-  auth,
-  getAuth,
-  getDoc,
-  onAuthStateChanged,
-  signOut,
-  doc,
-} from "@/firebase";
+import { auth, getAuth, onAuthStateChanged, signOut, doc, getDoc, db } from "@/firebase";
 
 export default {
   data: () => ({
-    group: null,
     isAuthenticated: false,
-    isAuthorized: false,
     mail: "status: neprijavljen korisnik",
-    profilePicture: null,
   }),
 
   mounted() {
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        getDoc(doc(db, "Users", user.email)).then((docSnap) => {
-          if (docSnap.exists()) {
-            console.log(
-              "Document data: ",
-              docSnap.data()[("Email", "Profilna")]
-            );
-            this.mail = docSnap.data()["Email"];
-            this.profilePicture = docSnap.data()["Profilna"];
-          } else {
-            console.log("No such document!");
-          }
-        });
-        this.mail = auth.currentUser.email;
-      }
-      else {
-				this.email = "User in not loged in"
-			}
-    });
+    this.checkAuthState();
   },
 
   methods: {
+    checkAuthState() {
+      onAuthStateChanged(auth, async (user) => {
+        if (user) {
+          this.isAuthenticated = true;
+          this.mail = user.email; // Use the email directly from the user object
+          const userDoc = await getDoc(doc(db, "Users", user.email));
+          if (userDoc.exists()) {
+            const userData = userDoc.data();
+            this.mail = userData.Email || user.email; // Fallback to user's email if "Email" field is not found
+          } else {
+            console.log("No such document!");
+          }
+        } else {
+          this.isAuthenticated = false;
+          this.mail = "status: neprijavljen korisnik";
+        }
+      });
+    },
     signOut() {
       const auth = getAuth();
       signOut(auth)
         .then(() => {
           console.log("signed out");
           this.$router.push({ path: "/login" });
+          location.reload();
         })
         .catch((error) => {
           console.error(error);
@@ -99,7 +89,6 @@ export default {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background-color: #e4907d;
   margin-right: 10px;
 }
 </style>

@@ -113,44 +113,13 @@
             <v-card-text>
               <v-form @submit.prevent="submitForm" class="w-70">
                 <v-text-field v-model="ime" label="Ime" required></v-text-field>
-                <v-text-field
-                  v-model="prezime"
-                  label="Prezime"
-                  required
-                ></v-text-field>
-                <v-text-field
-                  v-model="email"
-                  label="Email"
-                  type="email"
-                  required
-                ></v-text-field>
-                <v-text-field
-                  v-model="kontakt"
-                  label="Kontakt (mob)"
-                  type="tel"
-                  required
-                ></v-text-field>
-                <v-text-field
-                  v-model="adresa"
-                  label="Adresa"
-                  required
-                ></v-text-field>
-                <v-text-field
-                  v-model="mjesto"
-                  label="Mjesto stanovanja"
-                  required
-                ></v-text-field>
-                <v-file-input
-                  v-model="zivotopis"
-                  label="Životopis (pdf)"
-                  accept=".pdf"
-                  required
-                ></v-file-input>
-                <v-checkbox
-                  v-model="politika"
-                  label="Potvrda o politici privatnosti i uvjetima korištenja"
-                  required
-                ></v-checkbox>
+                <v-text-field v-model="prezime" label="Prezime" type="text" required></v-text-field>
+                <v-text-field v-model="email" label="Email" type="email" required></v-text-field>
+                <v-text-field v-model="kontakt" label="Kontakt (mob)" type="tel" required></v-text-field>
+                <v-text-field v-model="adresa" label="Adresa" required></v-text-field>
+                <v-text-field v-model="mjesto" label="Mjesto stanovanja" required></v-text-field>
+                <v-file-input v-model="zivotopis" label="Životopis (pdf)" accept=".pdf" required></v-file-input>
+                <v-checkbox v-model="politika" label="Potvrda o politici privatnosti i uvjetima korištenja" required></v-checkbox>
                 <v-btn type="submit" color="primary">Pošalji</v-btn>
               </v-form>
             </v-card-text>
@@ -549,7 +518,27 @@ export default {
           },
         },
       ],
+      ime: '',
+      prezime: '',
+      email: '',
+      kontakt: '',
+      adresa: '',
+      mjesto: '',
+      zivotopis: null,
+      politika: false,
     };
+  },
+  methods: {
+    submitForm() {
+      if (this.isUserLoggedIn) {
+        // Logika za slanje forme
+        console.log("Forma je poslana!");
+      } else {
+        // Ako korisnik nije ulogiran, prikaži poruku ili preusmjeri na login
+        alert("Ulogirajte se kako bi slanje podataka bilo validno.");
+        // this.$router.push("/login");
+      }
+    }
   },
   created() {
     const jobId = this.$route.params.id;

@@ -5,6 +5,7 @@ import login from '../views/Login.vue'
 import register from '../views/Register.vue'
 import profile from '../views/Profile.vue'
 import job from '../views/Job.vue'
+import employer from'../views/Employer.vue'
 
 Vue.use(VueRouter)
 
@@ -34,8 +35,13 @@ const routes = [
     name: 'Job',
     component: job,
     props: true // This enables passing route params as props to the component
+  },
+  {
+    path: '/employer',
+    name: 'Employer',
+    component: employer,
+    props: true // This enables passing route params as props to the component
   }
-  ,
 ]
 
 const router = new VueRouter({
