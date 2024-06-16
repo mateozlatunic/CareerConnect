@@ -126,6 +126,27 @@
           </v-card>
         </v-col>
       </v-row>
+      
+<!-- Opcionalno kartica -->
+<v-row class="job-info-row" style="max-width: 60%; margin: 0 auto;">
+  <v-col cols="12">
+    <div class="card" style="background-color: rgb(216, 235, 255);">
+      <h2>Opcionalno</h2>
+      <!-- Dodavanje ocjenjivanja poslodavca -->
+      <v-row class="d-flex align-center">
+        <v-col cols="12" md="4">
+          <div>Ocijenite poslodavca:</div>
+        </v-col>
+        <v-col cols="12" md="8">
+          <v-rating v-model="rating" color="yellow darken-3" background-color="yellow darken-3" half-increments style="transform: scale(1.15); margin-left: 70px;"></v-rating>
+        </v-col>
+      </v-row>
+      <v-btn @click="submitRating" color="primary">Pošalji ocjenu</v-btn>
+    </div>
+  </v-col>
+</v-row>
+
+
     </v-container>
   </v-main>
 </template>
@@ -526,6 +547,7 @@ export default {
       mjesto: '',
       zivotopis: null,
       politika: false,
+      rating: 0
     };
   },
   methods: {
@@ -538,6 +560,9 @@ export default {
         alert("Ulogirajte se kako bi slanje podataka bilo validno.");
         // this.$router.push("/login");
       }
+    },
+    submitRating() {
+      alert(`Poslodavac je ocijenjen s ocjenom: ${this.rating}`);
     }
   },
   created() {

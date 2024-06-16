@@ -1,6 +1,6 @@
 <template>
-  <v-main class="background" style="padding-top: 10px">
-    <v-container style="padding-bottom: 50px">
+  <v-main class="background" style="padding-top: 5px">
+    <v-container style="padding-bottom: 35px">
       <v-row justify="center" class="mt-4">
         <v-col cols="12" sm="8" md="6">
           <v-card class="cardColor">

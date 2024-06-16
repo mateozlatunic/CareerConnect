@@ -1,5 +1,6 @@
 <template>
-  <v-container>
+  <v-main class="purple-background" >
+  <v-container style="margin-bottom: 72px; background-color: rgb(216, 235, 255); border-radius: 5px;">
     <v-form ref="form" v-model="form">
       <v-text-field
         v-model="name"
@@ -114,13 +115,6 @@
         required
       ></v-text-field>
 
-      <v-file-input
-        label="Dodajte sliku"
-        prepend-icon="mdi-camera"
-        v-model="profileImage"
-        @change="uploadImage"
-      ></v-file-input>
-
       <v-btn
         :disabled="!form"
         :loading="isLoading"
@@ -131,7 +125,7 @@
         Spremi
       </v-btn>
 
-      <v-btn
+      <v-btn style="margin-left: 10px;"
         color="red"
         type="button"
         @click="deleteAccount"
@@ -140,16 +134,15 @@
       </v-btn>
     </v-form>
   </v-container>
+</v-main>
 </template>
 
 <script>
-import { getAuth, updateEmail, updatePassword, deleteUser } from "firebase/auth";
+import { getAuth, updatePassword, deleteUser } from "firebase/auth";
 import { getFirestore, doc, setDoc, getDoc, deleteDoc } from "firebase/firestore";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 const auth = getAuth();
 const db = getFirestore();
-const storage = getStorage();
 
 export default {
   data: () => ({
@@ -167,7 +160,9 @@ export default {
     telephone: "",
     companyName: "",
     companyAddress: "",
-    profileImage: null,
+    date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+      .toISOString()
+      .substr(0, 10),
     users: ["Poslodavac", "Kandidat"],
     rules: {
       required: (value) => !!value || "Required.",
@@ -184,7 +179,8 @@ export default {
 
   methods: {
     async loadProfile() {
-      const userDoc = doc(db, "Users", auth.currentUser.email);
+      const user = auth.currentUser;
+      const userDoc = doc(db, "Users", user.uid);
       const docSnap = await getDoc(userDoc);
       if (docSnap.exists()) {
         const data = docSnap.data();
@@ -197,58 +193,47 @@ export default {
         this.telephone = data.telephone || "";
         this.companyName = data.companyName || "";
         this.companyAddress = data.companyAddress || "";
-        this.profileImage = data.profileImage || null;
-      }
-    },
-    async uploadImage(file) {
-      if (file) {
-        const storageRef = ref(storage, `profiles/${auth.currentUser.uid}/${file.name}`);
-        const snapshot = await uploadBytes(storageRef, file);
-        const downloadURL = await getDownloadURL(snapshot.ref);
-        console.log("File available at", downloadURL);
-        this.profileImage = downloadURL;
       }
     },
     async saveProfile() {
       this.isLoading = true;
       const user = auth.currentUser;
       try {
-        if (this.email !== user.email) {
-          await updateEmail(user, this.email);
-        }
+        // Ažuriranje lozinke u Firebase Authentication sustavu
         if (this.password !== "" && this.password === this.confirmPassword) {
           await updatePassword(user, this.password);
         }
-        const userDoc = doc(db, "Users", user.email);
+        // Ažuriranje korisničkih podataka u Firestore
+        const userDoc = doc(db, "Users", user.uid);
         await setDoc(userDoc, {
           name: this.name,
           surname: this.surname,
           date: this.date,
           email: this.email,
+          password: this.password,
           userTIP: this.userTIP,
           interest: this.interest,
           telephone: this.telephone,
           companyName: this.companyName,
           companyAddress: this.companyAddress,
-          profileImage: this.profileImage,
         });
-        alert("Profile updated successfully!");
+        alert("Profil uspješno ažuriran!");
       } catch (error) {
-        console.error("Error updating profile: ", error);
+        console.error("Greška prilikom ažuriranja profila: ", error);
       } finally {
         this.isLoading = false;
       }
     },
     async deleteAccount() {
       const user = auth.currentUser;
-      const userDoc = doc(db, "Users", user.email);
+      const userDoc = doc(db, "Users", user.uid);
       try {
         await deleteUser(user);
         await deleteDoc(userDoc);
-        alert("Account deleted successfully.");
+        alert("Račun uspješno uklonjen.");
         this.$router.push("/register");
       } catch (error) {
-        console.error("Error deleting account: ", error);
+        console.error("Greška prilikom uklanjanja računa: ", error);
       }
     },
   },
@@ -256,4 +241,7 @@ export default {
 </script>
 
 <style scoped>
+.purple-background {
+    background-color: rgb(159, 132, 256); /* Ljubičasta boja */
+}
 </style>

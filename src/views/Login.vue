@@ -1,6 +1,6 @@
 <template>
   <v-main class="purple-background"> <!-- Promijenio sam v-main u v-app -->
-      <v-container class="purple-background" style="margin-bottom: 340px">
+      <v-container class="purple-background" style="margin-bottom: 342px">
         <v-row justify="center" class="purple-background" style="padding-top: 0px">
           <v-col cols="12" sm="8" md="6">
             <v-card class="cardColor">
@@ -30,7 +30,7 @@
                     @click="login()"
                     >Prijavi se</v-btn
                   >
-                  <v-btn to="/register" text>Nemaš račun?</v-btn>
+                  <v-btn to="/register" text style="margin-left: 10px;">Nemaš račun?</v-btn>
                 </v-form>
               </v-card-text>
             </v-card>

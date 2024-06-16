@@ -1,11 +1,12 @@
 <template>
   <v-app>
-    <v-app-bar app color="primary" dark>
+    <v-app-bar app color="purple" dark>
       <v-toolbar-title>
         <router-link to="/" class="white--text text-decoration-none"
           >Career Connect</router-link
         >
       </v-toolbar-title>
+      <div>&nbsp; | <v-btn text to="/aboutUs" class="white--text text-decoration-none">About Us</v-btn> &nbsp;</div>
 
       <v-spacer></v-spacer>
 
