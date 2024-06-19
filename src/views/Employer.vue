@@ -77,10 +77,10 @@ export default {
             adresa: data.adresa,
             mjesto: data.mjesto,
             naziv: data.naziv,
-            zivotopis: data.zivotopis, // URL to the uploaded PDF
+            zivotopis: data.zivotopis, // URL objave PDF
             politika: data.politika,
             rating: data.rating,
-            status: null, // Dodajemo status
+            status: null, 
           });
         });
         this.jobs = jobsArray;
@@ -133,11 +133,11 @@ button:hover {
 }
 
 .accepted-card {
-  background-color: #c8e6c9; /* Zelena boja za prihvaćene poslove */
+  background-color: #c8e6c9; /* Zelena boja */
 }
 
 .rejected-card {
-  background-color: #ffcdd2; /* Crvena boja za odbijene poslove */
+  background-color: #ffcdd2; /* Crvena boja */
 }
 
 .main {

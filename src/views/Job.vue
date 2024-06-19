@@ -109,11 +109,12 @@
       </v-row>
 
       <!-- Job Information View -->
-      <v-row justify="center" class="form-row">
+      <v-row justify="center" class="form-row" v-if="user">
         <v-col cols="12" sm="8" md="6">
           <v-card class="pa-5 cardColor">
             <v-card-title class="headline">
-              Podaci za poslodavca | {{ selectedJob ? selectedJob.employer : '' }}
+              Podaci za poslodavca |
+              {{ selectedJob ? selectedJob.employer : "" }}
             </v-card-title>
             <v-card-text>
               <v-form @submit.prevent="submitForm" class="form-content">
@@ -193,20 +194,40 @@
           </v-card>
         </v-col>
       </v-row>
+      <v-row justify="center" v-else>
+        <v-col cols="12" sm="8" md="6">
+          <v-alert type="error" dismissible>
+            Morate biti prijavljeni da biste poslali podatke poslodavcu.
+          </v-alert>
+        </v-col>
+      </v-row>
+      <v-snackbar v-model="snackbar" :timeout="3000" top centered>
+        {{ snackbarText }}
+        <v-btn
+          color="black"
+          text
+          @click="snackbar = false"
+          style="margin-left: 10px"
+          >Zatvori</v-btn
+        >
+      </v-snackbar>
     </v-container>
   </v-main>
 </template>
 
 <script>
-import { db, storage } from "../firebase";
+import { db, storage, auth } from "../firebase";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore/lite";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { onAuthStateChanged } from "firebase/auth";
 
 export default {
   name: "Job",
   data() {
     return {
       selectedJob: null,
+
+      // Opis svakog posla posebno
       jobs: [
         {
           image:
@@ -599,6 +620,9 @@ export default {
       zivotopis: null,
       politika: false,
       rating: 0,
+      user: null,
+      snackbar: false,
+      snackbarText: "",
       rules: {
         email: (v) => !!(v || "").match(/@/) || "Unesi email",
         required: (v) => !!v || "Potrebno popuniti polje",
@@ -609,18 +633,33 @@ export default {
   methods: {
     async submitForm() {
       try {
-        // Provera da li je fajl zivotopis postavljen
-        if (!this.zivotopis) {
-          throw new Error("Molimo vas da priložite životopis.");
+        // Provjera da li su svi obavezni podaci ispunjeni
+        if (
+          !this.ime ||
+          !this.prezime ||
+          !this.email ||
+          !this.kontakt ||
+          !this.adresa ||
+          !this.mjesto ||
+          !this.naziv ||
+          !this.zivotopis ||
+          !this.politika
+        ) {
+          throw new Error("Molimo ispunite obavezna polja.");
         }
 
-        // Upload PDF to Firebase Storage
+        // Provjera da li je fajl zivotopis postavljen
+        if (!this.zivotopis) {
+          throw new Error("Molimo priložite životopis.");
+        }
+
+        // Objava PDF-a na Firebase Storage
         const pdfFile = this.zivotopis;
         const storageRef = ref(storage, `pdfs/${pdfFile.name}`);
         const snapshot = await uploadBytes(storageRef, pdfFile);
         const pdfUrl = await getDownloadURL(snapshot.ref);
 
-        // Save form data to Firestore
+        // Spremanje forme na Firestore
         await addDoc(collection(db, "jobApplication"), {
           ime: this.ime,
           prezime: this.prezime,
@@ -635,13 +674,14 @@ export default {
           timestamp: serverTimestamp(),
         });
 
-        console.log("Prijava je uspješno spremljena!");
+        this.snackbarText = "Prijava je uspješno spremljena!";
+        this.snackbar = true;
 
-        // Resetovanje forme nakon uspešnog slanja
+        // Reset forme nakon uspješnog slanja
         this.resetForm();
       } catch (error) {
         console.error("Greška prilikom spremanja prijave: ", error);
-        alert(`Greška prilikom spremanja prijave: ${error.message}`);
+        alert(`Greška prilikom spremanja prijave | ${error.message}`);
       }
     },
     resetForm() {
@@ -655,11 +695,14 @@ export default {
       this.zivotopis = null;
       this.politika = false;
       this.rating = 0;
-    }
+    },
   },
   created() {
     const jobId = this.$route.params.id;
     this.selectedJob = this.jobs[parseInt(jobId, 10)];
+    onAuthStateChanged(auth, (user) => {
+      this.user = user;
+    });
   },
 };
 </script>

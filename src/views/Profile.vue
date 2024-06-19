@@ -219,7 +219,7 @@ export default {
     });
     alert("Profil uspješno ažuriran!");
     
-    // Nakon što su podaci uspješno spremljeni, resetiraj formu
+    // Nakon spremanja, resetira se forma
     this.name = "";
     this.surname = "";
     this.date = "";
@@ -244,11 +244,11 @@ export default {
       const userDocByEmail = doc(db, "Users", userEmail);
       const userDocByUID = doc(db, "Users", user.uid);
       try {
-        // First delete the user document from Firestore by email
+        // Izbriši doc korisnika iz Firestore-a preko email-a
         await deleteDoc(userDocByEmail);
-        // Then delete the user document from Firestore by UID
+        // Izbriši doc korisnika iz Firestore-a preko UID
         await deleteDoc(userDocByUID);
-        // Then delete the user from Firebase Authentication
+        // Izbriši korisnika iz Firebase Authentication-a
         await deleteUser(user);
         alert("Račun uspješno uklonjen.");
         this.$router.push("/register");
@@ -256,7 +256,6 @@ export default {
         console.error("Greška prilikom uklanjanja računa: ", error);
         if (error.code === 'auth/requires-recent-login') {
           alert("Za brisanje računa potrebna je ponovna prijava.");
-          // Handle the re-login process here
         }
       }
     },
