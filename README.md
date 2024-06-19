@@ -1,5 +1,7 @@
 # career-connect
 
+## Netlify: [Launch App](https://careerconnectapp.netlify.app/)
+
 ## Project setup
 ```
 npm install
