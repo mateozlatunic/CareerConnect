@@ -6,7 +6,7 @@
           >Career Connect</router-link
         >
       </v-toolbar-title>
-      <div>&nbsp; | <v-btn text to="/aboutUs" class="white--text text-decoration-none">About Us</v-btn> &nbsp;</div>
+      <div v-if="isAuthenticated && !isEmployer">&nbsp; | <v-btn text to="/aboutUs" class="white--text text-decoration-none">About Us</v-btn> &nbsp;</div>
 
       <v-spacer></v-spacer>
 
@@ -31,6 +31,7 @@ import { auth, getAuth, onAuthStateChanged, signOut, doc, getDoc, db } from "@/f
 export default {
   data: () => ({
     isAuthenticated: false,
+    isEmployer: false,
     mail: "status: neprijavljen korisnik",
   }),
 
@@ -39,17 +40,29 @@ export default {
   },
 
   methods: {
-    checkAuthState() {
+    async checkAuthState() {
       onAuthStateChanged(auth, async (user) => {
         if (user) {
           this.isAuthenticated = true;
-          this.mail = user.email; // Use the email directly from the user object
+          this.mail = user.email; // Koristi email direktno iz objekta korisnika
           const userDoc = await getDoc(doc(db, "Users", user.email));
           if (userDoc.exists()) {
             const userData = userDoc.data();
-            this.mail = userData.Email || user.email; // Fallback to user's email if "Email" field is not found
+            this.mail = userData.Email || user.email; // Koristi korisnikov email ako polje "Email" nije pronađeno
+
+            // Provjeri tip korisnika i preusmjeri ako je potrebno
+            if (userData.AuthorisationType === 'Poslodavac') {
+              this.isEmployer = true;
+              this.$router.push('/employer').catch(err => {
+                if (err.name !== 'NavigationDuplicated') {
+                  throw err;
+                }
+              });
+            } else {
+              this.isEmployer = false;
+            }
           } else {
-            console.log("No such document!");
+            console.log("Dokument ne postoji!");
           }
         } else {
           this.isAuthenticated = false;
@@ -61,7 +74,7 @@ export default {
       const auth = getAuth();
       signOut(auth)
         .then(() => {
-          console.log("signed out");
+          console.log("Odjavljen");
           this.$router.push({ path: "/login" });
           location.reload();
         })

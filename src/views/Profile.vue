@@ -165,11 +165,11 @@ export default {
       .substr(0, 10),
     users: ["Poslodavac", "Kandidat"],
     rules: {
-      required: (value) => !!value || "Required.",
-      email: (value) => /.+@.+\..+/.test(value) || "E-mail must be valid.",
-      password: (value) => value.length >= 6 || "Password must be at least 6 characters.",
+      required: (value) => !!value || "Potrebno popuniti polje",
+      email: (value) => /.+@.+\..+/.test(value) || "Unesi validan e-mail",
+      password: (value) => value.length >= 6 || "Lozinka mora sadržavati slova i brojeve",
       length: (len) => (value) => value.length >= len || `Must be at least ${len} characters.`,
-      telephoneNumber: (value) => /^\d+$/.test(value) || "Must be a valid telephone number.",
+      telephoneNumber: (value) => (!!value && value.length === 10) || "Unesi 10 brojeva",
     },
   }),
 
@@ -196,34 +196,48 @@ export default {
       }
     },
     async saveProfile() {
-      this.isLoading = true;
-      const user = auth.currentUser;
-      try {
-        // Ažuriranje lozinke u Firebase Authentication sustavu
-        if (this.password !== "" && this.password === this.confirmPassword) {
-          await updatePassword(user, this.password);
-        }
-        // Ažuriranje korisničkih podataka u Firestore
-        const userDoc = doc(db, "Users", user.email);
-        await setDoc(userDoc, {
-          name: this.name,
-          surname: this.surname,
-          date: this.date,
-          email: this.email,
-          password: this.password,
-          userTIP: this.userTIP,
-          interest: this.interest,
-          telephone: this.telephone,
-          companyName: this.companyName,
-          companyAddress: this.companyAddress,
-        });
-        alert("Profil uspješno ažuriran!");
-      } catch (error) {
-        console.error("Greška prilikom ažuriranja profila: ", error);
-      } finally {
-        this.isLoading = false;
-      }
-    },
+  this.isLoading = true;
+  const user = auth.currentUser;
+  try {
+    // Ažuriranje lozinke u Firebase Authentication sustavu
+    if (this.password !== "" && this.password === this.confirmPassword) {
+      await updatePassword(user, this.password);
+    }
+    // Ažuriranje korisničkih podataka u Firestore
+    const userDoc = doc(db, "Users", user.email);
+    await setDoc(userDoc, {
+      name: this.name,
+      surname: this.surname,
+      date: this.date,
+      email: this.email,
+      password: this.password,
+      userTIP: this.userTIP,
+      interest: this.interest,
+      telephone: this.telephone,
+      companyName: this.companyName,
+      companyAddress: this.companyAddress,
+    });
+    alert("Profil uspješno ažuriran!");
+    
+    // Nakon što su podaci uspješno spremljeni, resetiraj formu
+    this.name = "";
+    this.surname = "";
+    this.date = "";
+    this.email = "";
+    this.password = "";
+    this.confirmPassword = "";
+    this.userTIP = "";
+    this.interest = "";
+    this.telephone = "";
+    this.companyName = "";
+    this.companyAddress = "";
+
+  } catch (error) {
+    console.error("Greška prilikom ažuriranja profila: ", error);
+  } finally {
+    this.isLoading = false;
+  }
+},
     async deleteAccount() {
       const user = auth.currentUser;
       const userEmail = user.email;

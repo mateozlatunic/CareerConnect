@@ -13,7 +13,7 @@
         </v-col>
       </v-row>
 
-      <v-row class="job-info-row">
+      <v-row class="job-info-row" v-if="selectedJob">
         <!-- Kartica sa slikom/logom -->
         <v-col cols="12" sm="4" md="3">
           <v-card class="mx-auto cardColor" max-width="300">
@@ -25,10 +25,11 @@
             ></v-img>
           </v-card>
         </v-col>
+
         <!-- Kartica sa sadržajem posla -->
         <v-col cols="12" sm="8" md="9">
           <div class="card" style="background-color: white">
-            <div v-if="selectedJob">
+            <div>
               <h2>{{ selectedJob.employer }}</h2>
               <p>
                 Kategorija: <i>{{ selectedJob.category }}</i>
@@ -62,8 +63,8 @@
         </v-col>
       </v-row>
 
-      <!-- Ostale kartice -->
-      <v-row class="job-info-row">
+      <!-- O poslu -->
+      <v-row class="job-info-row" v-if="selectedJob">
         <v-col cols="12">
           <div class="card" style="background-color: white">
             <h2>O poslu:</h2>
@@ -76,7 +77,8 @@
         </v-col>
       </v-row>
 
-      <v-row class="job-info-row">
+      <!-- Nudimo Vam -->
+      <v-row class="job-info-row" v-if="selectedJob">
         <v-col cols="12">
           <div class="card" style="background-color: white">
             <h2>Nudimo Vam:</h2>
@@ -89,7 +91,8 @@
         </v-col>
       </v-row>
 
-      <v-row class="job-info-row">
+      <!-- Od Vas Očekujemo -->
+      <v-row class="job-info-row" v-if="selectedJob">
         <v-col cols="12">
           <div class="card" style="background-color: white">
             <h2>Od Vas Očekujemo:</h2>
@@ -105,53 +108,100 @@
         </v-col>
       </v-row>
 
-      <!-- Forma prijave posla -->
-      <v-row justify="center" style="padding-bottom: 40px">
+      <!-- Job Information View -->
+      <v-row justify="center" class="form-row">
         <v-col cols="12" sm="8" md="6">
-          <v-card class="pa-5, cardColor">
-            <v-card-title class="headline">Podaci za poslodavca</v-card-title>
+          <v-card class="pa-5 cardColor">
+            <v-card-title class="headline">
+              Podaci za poslodavca | {{ selectedJob ? selectedJob.employer : '' }}
+            </v-card-title>
             <v-card-text>
-              <v-form @submit.prevent="submitForm" class="w-70">
+              <v-form @submit.prevent="submitForm" class="form-content">
                 <v-text-field v-model="ime" label="Ime" required></v-text-field>
-                <v-text-field v-model="prezime" label="Prezime" type="text" required></v-text-field>
-                <v-text-field v-model="email" label="Email" type="email" required></v-text-field>
-                <v-text-field v-model="kontakt" label="Kontakt (mob)" type="tel" required></v-text-field>
-                <v-text-field v-model="adresa" label="Adresa" required></v-text-field>
-                <v-text-field v-model="mjesto" label="Mjesto stanovanja" required></v-text-field>
-                <v-file-input v-model="zivotopis" label="Životopis (pdf)" accept=".pdf" required></v-file-input>
-                <v-checkbox v-model="politika" label="Potvrda o politici privatnosti i uvjetima korištenja" required></v-checkbox>
+                <v-text-field
+                  v-model="prezime"
+                  label="Prezime"
+                  type="text"
+                  :rules="[rules.required]"
+                  required
+                ></v-text-field>
+                <v-text-field
+                  v-model="email"
+                  label="Email"
+                  type="email"
+                  :rules="[rules.email, rules.required]"
+                  required
+                ></v-text-field>
+                <v-text-field
+                  v-model="kontakt"
+                  label="Kontakt (mob)"
+                  type="tel"
+                  :rules="[rules.telephoneNumber, rules.required]"
+                  required
+                ></v-text-field>
+                <v-text-field
+                  v-model="adresa"
+                  label="Adresa"
+                  type="text"
+                  :rules="[rules.required]"
+                  required
+                ></v-text-field>
+                <v-text-field
+                  v-model="mjesto"
+                  label="Mjesto stanovanja"
+                  type="text"
+                  :rules="[rules.required]"
+                  required
+                ></v-text-field>
+                <v-text-field
+                  v-model="naziv"
+                  label="Naziv posla"
+                  type="text"
+                  :rules="[rules.required]"
+                  required
+                ></v-text-field>
+                <v-file-input
+                  v-model="zivotopis"
+                  label="Životopis (pdf)"
+                  accept=".pdf"
+                  required
+                ></v-file-input>
+                <v-card-title class="headline">Opcionalno</v-card-title>
+                <v-card class="optional-rating-card">
+                  <v-row class="d-flex align-center">
+                    <v-col cols="12" md="4">
+                      <div style="margin-left: 10px">Ocijenite poslodavca:</div>
+                    </v-col>
+                    <v-col cols="12" md="8">
+                      <v-rating
+                        v-model="rating"
+                        color="yellow darken-3"
+                        background-color="yellow darken-3"
+                        half-increments
+                      ></v-rating>
+                    </v-col>
+                  </v-row>
+                </v-card>
+                <v-checkbox
+                  v-model="politika"
+                  label="Potvrda o politici privatnosti i uvjetima korištenja"
+                  required
+                ></v-checkbox>
                 <v-btn type="submit" color="primary">Pošalji</v-btn>
               </v-form>
             </v-card-text>
           </v-card>
         </v-col>
       </v-row>
-      
-<!-- Opcionalno kartica -->
-<v-row class="job-info-row" style="max-width: 60%; margin: 0 auto;">
-  <v-col cols="12">
-    <div class="card" style="background-color: rgb(216, 235, 255);">
-      <h2>Opcionalno</h2>
-      <!-- Dodavanje ocjenjivanja poslodavca -->
-      <v-row class="d-flex align-center">
-        <v-col cols="12" md="4">
-          <div>Ocijenite poslodavca:</div>
-        </v-col>
-        <v-col cols="12" md="8">
-          <v-rating v-model="rating" color="yellow darken-3" background-color="yellow darken-3" half-increments style="transform: scale(1.15); margin-left: 70px;"></v-rating>
-        </v-col>
-      </v-row>
-      <v-btn @click="submitRating" color="primary">Pošalji ocjenu</v-btn>
-    </div>
-  </v-col>
-</v-row>
-
-
     </v-container>
   </v-main>
 </template>
 
 <script>
+import { db, storage } from "../firebase";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore/lite";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+
 export default {
   name: "Job",
   data() {
@@ -539,30 +589,72 @@ export default {
           },
         },
       ],
-      ime: '',
-      prezime: '',
-      email: '',
-      kontakt: '',
-      adresa: '',
-      mjesto: '',
+      ime: "",
+      prezime: "",
+      email: "",
+      kontakt: "",
+      adresa: "",
+      mjesto: "",
+      naziv: "",
       zivotopis: null,
       politika: false,
-      rating: 0
+      rating: 0,
+      rules: {
+        email: (v) => !!(v || "").match(/@/) || "Unesi email",
+        required: (v) => !!v || "Potrebno popuniti polje",
+        telephoneNumber: (v) => (!!v && v.length === 10) || "Unesi 10 brojeva",
+      },
     };
   },
   methods: {
-    submitForm() {
-      if (this.isUserLoggedIn) {
-        // Logika za slanje forme
-        console.log("Forma je poslana!");
-      } else {
-        // Ako korisnik nije ulogiran, prikaži poruku ili preusmjeri na login
-        alert("Ulogirajte se kako bi slanje podataka bilo validno.");
-        // this.$router.push("/login");
+    async submitForm() {
+      try {
+        // Provera da li je fajl zivotopis postavljen
+        if (!this.zivotopis) {
+          throw new Error("Molimo vas da priložite životopis.");
+        }
+
+        // Upload PDF to Firebase Storage
+        const pdfFile = this.zivotopis;
+        const storageRef = ref(storage, `pdfs/${pdfFile.name}`);
+        const snapshot = await uploadBytes(storageRef, pdfFile);
+        const pdfUrl = await getDownloadURL(snapshot.ref);
+
+        // Save form data to Firestore
+        await addDoc(collection(db, "jobApplication"), {
+          ime: this.ime,
+          prezime: this.prezime,
+          email: this.email,
+          kontakt: this.kontakt,
+          adresa: this.adresa,
+          mjesto: this.mjesto,
+          naziv: this.naziv,
+          zivotopis: pdfUrl,
+          politika: this.politika,
+          rating: this.rating,
+          timestamp: serverTimestamp(),
+        });
+
+        console.log("Prijava je uspješno spremljena!");
+
+        // Resetovanje forme nakon uspešnog slanja
+        this.resetForm();
+      } catch (error) {
+        console.error("Greška prilikom spremanja prijave: ", error);
+        alert(`Greška prilikom spremanja prijave: ${error.message}`);
       }
     },
-    submitRating() {
-      alert(`Poslodavac je ocijenjen s ocjenom: ${this.rating}`);
+    resetForm() {
+      this.ime = "";
+      this.prezime = "";
+      this.email = "";
+      this.kontakt = "";
+      this.adresa = "";
+      this.mjesto = "";
+      this.naziv = "";
+      this.zivotopis = null;
+      this.politika = false;
+      this.rating = 0;
     }
   },
   created() {
@@ -604,19 +696,5 @@ button:hover {
 
 .cardColor {
   background-color: rgb(216, 235, 255);
-}
-
-.job-info-row {
-  margin: 20px 0;
-}
-
-.job-info-row .v-card {
-  padding: 0;
-}
-
-.job-info-row .v-col {
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 </style>

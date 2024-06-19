@@ -198,8 +198,12 @@ export default {
       this.companyName = null;
     },
 
-    postActionMoveToView() {
-      this.$router.replace({ path: "/" });
+    postActionMoveToView(usertype) {
+      if (usertype === "Poslodavac") {
+        this.$router.replace({ path: "/employer" });
+      } else {
+        this.$router.replace({ path: "/" });
+      }
     },
 
     saveAdditionalData(
@@ -268,7 +272,7 @@ export default {
               telephoneNumber
             );
             this.clearFormData();
-            this.postActionMoveToView();
+            this.postActionMoveToView(usertype);
           })
           .catch((error) => {
             alert("Došlo je do pogreške: " + error.message);

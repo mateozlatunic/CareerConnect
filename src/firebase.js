@@ -1,15 +1,35 @@
-import firebase from 'firebase/compat/app'
-import { doc, addDoc, getDoc, setDoc, getDocs, getCount, getFirestore, collection } from 'firebase/firestore/lite'
-import { getAuth, updatePassword, signOut, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail, confirmPasswordReset, beforeAuthStateChanged, onAuthStateChanged } from 'firebase/auth'
-import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage'
-// Follow this pattern to import other Firebase services
-// import { } from 'firebase/<service>';
-
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
+import firebase from 'firebase/compat/app';
+import {
+  doc,
+  addDoc,
+  getDoc,
+  setDoc,
+  getDocs,
+  getCount,
+  getFirestore,
+  collection,
+  serverTimestamp
+} from 'firebase/firestore/lite';
+import {
+  getAuth,
+  updatePassword,
+  signOut,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  sendPasswordResetEmail,
+  confirmPasswordReset,
+  beforeAuthStateChanged,
+  onAuthStateChanged
+} from 'firebase/auth';
+import {
+  getStorage,
+  ref,
+  uploadBytes,
+  getDownloadURL
+} from 'firebase/storage';
+import { initializeApp } from 'firebase/app';
 
 // Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: "AIzaSyB9aolCgDvMxgSrjVbeWlkRk4FhKEG__70",
   authDomain: "careerconnect-a82ba.firebaseapp.com",
@@ -20,22 +40,24 @@ const firebaseConfig = {
   measurementId: "G-3E21L6BW7M"
 };
 
-//firebase.initializeApp(firebaseConfig);
-
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const storage = getStorage(app);
 const db = getFirestore(app);
 
-export { app, auth, storage,
+export {
+  app,
+  auth,
+  storage,
   getAuth,
-	db,
+  db,
+  collection,
   doc,
   getDoc,
-	setDoc,
+  setDoc,
   addDoc,
-	createUserWithEmailAndPassword,
+  createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   sendPasswordResetEmail,
   onAuthStateChanged,
@@ -43,5 +65,5 @@ export { app, auth, storage,
   uploadBytes,
   getDownloadURL,
   signOut,
-  updatePassword
-}
+  updatePassword,
+};

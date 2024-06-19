@@ -41,7 +41,7 @@
 </template>
 
 <script>
-import { auth, signInWithEmailAndPassword } from "@/firebase";
+import { auth, signInWithEmailAndPassword, doc, getDoc, db } from "@/firebase";
 
 export default {
   name: "Login",
@@ -61,15 +61,33 @@ export default {
   }),
 
   methods: {
-    login() {
+    async login() {
       let email = this.email;
-      signInWithEmailAndPassword(auth, email, this.password)
-        .then(() => {
-          this.$router.push("/");
-        })
-        .catch(() => {
-          alert("Pogrešna lozinka ili e-mail!");
-        });
+      try {
+        const userCredential = await signInWithEmailAndPassword(auth, email, this.password);
+        const user = userCredential.user;
+        const userDoc = await getDoc(doc(db, "Users", user.email));
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          if (userData.AuthorisationType === "Poslodavac") {
+            this.$router.push("/employer").catch(err => {
+              if (err.name !== 'NavigationDuplicated') {
+                throw err;
+              }
+            });
+          } else {
+            this.$router.push("/").catch(err => {
+              if (err.name !== 'NavigationDuplicated') {
+                throw err;
+              }
+            });
+          }
+        } else {
+          console.log("Dokument ne postoji!");
+        }
+      } catch (error) {
+        alert("Pogrešna lozinka ili e-mail!");
+      }
     },
   },
 };
