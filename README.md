@@ -1,6 +1,6 @@
 # career-connect
 
-## Netlify: [Launch App](https://careerconnectapp.netlify.app/)
+## Netlify: [Launch App](https://careerconnectapp.netlify.app/) // Note: neke rute su bagirane
 
 ## Project setup
 ```
