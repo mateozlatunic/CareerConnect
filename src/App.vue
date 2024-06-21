@@ -6,7 +6,7 @@
           >Career Connect</router-link
         >
       </v-toolbar-title>
-      <div v-if="isAuthenticated && !isEmployer">&nbsp; | <v-btn text to="/aboutUs" class="white--text text-decoration-none">About Us</v-btn> &nbsp;</div>
+      <div>&nbsp; | <v-btn text to="/aboutUs" class="white--text text-decoration-none">About Us</v-btn> &nbsp;</div>
 
       <v-spacer></v-spacer>
 
